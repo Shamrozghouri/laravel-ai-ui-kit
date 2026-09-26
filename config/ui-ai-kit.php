@@ -260,6 +260,12 @@ return [
         'welcome_message' => 'Hi. Ask me anything about the package and I will try to help.',
         'placeholder' => 'Type your message',
         'position' => 'bottom-right',        // bottom-right | bottom-left
+
+        // Overrides the header icon. Accepts an image URL/path (png, jpg,
+        // gif, svg, webp, or a data: URI) or a short piece of text/an emoji
+        // (e.g. "🤖"). Leave null to keep the default icon.
+        'avatar' => env('UI_AI_KIT_CHATBOT_AVATAR'),
+
         'open_on_load' => false,
         'suggestions' => [
             'How do I install it?',

@@ -17,6 +17,7 @@ class Chatbot extends Component
         public ?string $position = null,
         public ?string $endpoint = null,
         public ?bool $open = null,
+        public ?string $avatar = null,
         ?array $suggestions = null,
     ) {
         $this->name ??= config('ui-ai-kit.chatbot.name', 'AI Assistant');
@@ -25,6 +26,7 @@ class Chatbot extends Component
         $this->position ??= config('ui-ai-kit.chatbot.position', 'bottom-right');
         $this->endpoint ??= url(config('ui-ai-kit.api.route', 'ui-ai-kit/chat'));
         $this->open ??= (bool) config('ui-ai-kit.chatbot.open_on_load', false);
+        $this->avatar ??= config('ui-ai-kit.chatbot.avatar');
         $this->suggestions = $suggestions ?? (array) config('ui-ai-kit.chatbot.suggestions', []);
     }
 

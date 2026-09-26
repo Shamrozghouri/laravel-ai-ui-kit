@@ -1,12 +1,28 @@
 <section class="uiaikit-chat__window" role="dialog" aria-label="{{ $name }}">
+    @php($avatar = $avatar ?? null)
     <header class="uiaikit-chat__header">
         <span class="uiaikit-chat__avatar" aria-hidden="true">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
-                <rect x="3.5" y="7" width="17" height="12.5" rx="3.5" stroke="currentColor" stroke-width="1.7"/>
-                <path d="M12 3.5V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                <circle cx="9" cy="13" r="1.3" fill="currentColor"/>
-                <circle cx="15" cy="13" r="1.3" fill="currentColor"/>
-            </svg>
+            @php
+                $avatarIsImage = filled($avatar) && (
+                    str_starts_with($avatar, 'http://')
+                    || str_starts_with($avatar, 'https://')
+                    || str_starts_with($avatar, '/')
+                    || str_starts_with($avatar, 'data:')
+                    || (bool) preg_match('/\.(png|jpe?g|gif|svg|webp)$/i', $avatar)
+                );
+            @endphp
+            @if ($avatarIsImage)
+                <img src="{{ $avatar }}" alt="">
+            @elseif (filled($avatar))
+                <span class="uiaikit-chat__avatar-text">{{ $avatar }}</span>
+            @else
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+                    <rect x="3.5" y="7" width="17" height="12.5" rx="3.5" stroke="currentColor" stroke-width="1.7"/>
+                    <path d="M12 3.5V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                    <circle cx="9" cy="13" r="1.3" fill="currentColor"/>
+                    <circle cx="15" cy="13" r="1.3" fill="currentColor"/>
+                </svg>
+            @endif
         </span>
         <span>
             <span class="uiaikit-chat__title">{{ $name }}</span>

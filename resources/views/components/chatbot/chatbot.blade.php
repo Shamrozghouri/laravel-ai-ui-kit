@@ -11,6 +11,7 @@
         'welcome' => $welcome,
         'placeholder' => $placeholder,
         'suggestions' => $suggestions,
+        'avatar' => $avatar,
     ])
 
     @include('ui-ai-kit::components.chatbot.button', ['name' => $name])

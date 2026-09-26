@@ -88,6 +88,7 @@ The `content` key holds every string on the page: nav links, hero, features, ste
     'welcome_message' => 'How can I help?',
     'placeholder' => 'Type your message',
     'position' => 'bottom-right',   // or bottom-left
+    'avatar' => null,               // image URL/path, an emoji, or null for the default icon
     'open_on_load' => false,
     'suggestions' => ['How do I get started?'],
     'max_length' => 2000,
@@ -97,7 +98,7 @@ The `content` key holds every string on the page: nav links, hero, features, ste
 Any of these can be overridden per instance:
 
 ```blade
-<x-ui-ai-kit::chatbot name="Support" position="bottom-left" :open="true" />
+<x-ui-ai-kit::chatbot name="Support" position="bottom-left" avatar="🤖" :open="true" />
 ```
 
 ### Console (full-page chatbot UI)
@@ -175,6 +176,7 @@ wizard writes to. All are optional; defaults match the LaravelBot look.
 | `UI_AI_KIT_LOAD_FONTS` | Whether to pull Instrument Sans from Google Fonts |
 | `UI_AI_KIT_LANDING_ENABLED`, `UI_AI_KIT_LANDING_ROUTE` | Landing page toggle / URL |
 | `UI_AI_KIT_CHATBOT_ENABLED`, `UI_AI_KIT_CHATBOT_NAME` | Floating widget toggle / name |
+| `UI_AI_KIT_CHATBOT_AVATAR` | Header icon override — image URL/path or an emoji |
 | `UI_AI_KIT_CONSOLE_ENABLED`, `UI_AI_KIT_CONSOLE_ROUTE` | Full-page console toggle / URL |
 | `UI_AI_KIT_CONSOLE_SIDEBAR`, `UI_AI_KIT_CONSOLE_PANEL`, `UI_AI_KIT_CONSOLE_HEADER` | Show/hide console regions |
 | `UI_AI_KIT_CONSOLE_NAME`, `UI_AI_KIT_CONSOLE_NAME_ACCENT`, `UI_AI_KIT_CONSOLE_TAGLINE` | Console brand text |
