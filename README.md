@@ -256,6 +256,18 @@ php artisan vendor:publish --tag=ui-ai-kit-views
 
 Publish the views only when config is not enough — once published, package updates no longer reach them.
 
+### Blade components
+
+The chat widget is split into small, independently overridable pieces rather than one large view. Each is registered as an anonymous component under the `ui-ai-kit::` namespace, so you can `@include` or `<x-ui-ai-kit::...>` any single one instead of publishing (and forking) the whole widget:
+
+| Component | View | Renders |
+| --- | --- | --- |
+| Chatbot | `<x-ui-ai-kit::chatbot />` | The class-based entry point — reads your config defaults, then composes the three below |
+| ChatbotWindow | `ui-ai-kit::components.chatbot.window` | The panel: header, message log, suggestions, footnote |
+| ChatbotButton | `ui-ai-kit::components.chatbot.button` | The floating launcher icon |
+| ChatMessage | `ui-ai-kit::components.chatbot.message` | A single message bubble — takes `role` and `body`, safe to reuse in a loop |
+| ChatInput | `ui-ai-kit::components.chatbot.input` | The composer: textarea + send button — takes `name` and `placeholder` |
+
 ## Testing
 
 ```bash
