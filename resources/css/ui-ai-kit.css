@@ -243,6 +243,22 @@
     scrollbar-width: thin;
 }
 
+.uiaikit-chat__empty {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 12px;
+    color: var(--uiaikit-text-faint);
+    text-align: center;
+}
+
+.uiaikit-chat__empty p {
+    margin: 0;
+    font-size: 0.875rem;
+}
+
 .uiaikit-msg {
     display: flex;
     flex-direction: column;

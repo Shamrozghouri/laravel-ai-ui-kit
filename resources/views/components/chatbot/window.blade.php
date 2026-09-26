@@ -22,6 +22,13 @@
     <div class="uiaikit-chat__log" data-uiaikit="log" role="log" aria-live="polite">
         @if (filled($welcome))
             @include('ui-ai-kit::components.chatbot.message', ['role' => 'assistant', 'body' => $welcome])
+        @else
+            <div class="uiaikit-chat__empty" data-uiaikit="empty">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 5.5h16v10H8.5L4 19.5v-14Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+                <p>Ask a question to get started.</p>
+            </div>
         @endif
     </div>
 

@@ -93,11 +93,17 @@
             suggestions = null;
         }
 
+        function hideEmptyState() {
+            var empty = log.querySelector('[data-uiaikit="empty"]');
+            if (empty) empty.remove();
+        }
+
         function submit(text, isRetry) {
             if (pending || !text.trim()) return;
 
             lastMessage = text;
             hideSuggestions();
+            hideEmptyState();
 
             if (!isRetry) {
                 addMessage('user', text);
