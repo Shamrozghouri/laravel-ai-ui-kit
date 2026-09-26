@@ -14,6 +14,7 @@
     @endif
 
     {!! \Shamrozghouri\LaravelUiAiKit\UiAiKit::assetTags() !!}
+    <link rel="stylesheet" href="{{ \Shamrozghouri\LaravelUiAiKit\UiAiKit::asset('css/landing.css') }}">
     @stack('ui-ai-kit-head')
 </head>
 <body class="uiaikit" data-uiaikit-theme="{{ config('ui-ai-kit.theme.mode', 'dark') }}" style="{{ \Shamrozghouri\LaravelUiAiKit\UiAiKit::themeVariables() }}">

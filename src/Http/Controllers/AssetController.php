@@ -14,6 +14,7 @@ class AssetController extends Controller
 {
     protected const FILES = [
         'ui-ai-kit.css' => ['css/ui-ai-kit.css', 'text/css'],
+        'landing.css' => ['css/landing.css', 'text/css'],
         'chatbot.js' => ['js/chatbot.js', 'application/javascript'],
         'landing.js' => ['js/landing.js', 'application/javascript'],
         'console.css' => ['css/console.css', 'text/css'],
