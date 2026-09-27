@@ -29,7 +29,7 @@ jobs:
     name: PHP ${{ matrix.php }} — Laravel ${{ matrix.laravel }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -41,7 +41,9 @@ jobs:
       - name: Install dependencies
         run: |
           composer require "illuminate/contracts=${{ matrix.laravel }}" --no-interaction --no-update
-          composer update --prefer-dist --no-interaction --no-progress
+          # Laravel 10 and 11 are kept in the matrix to verify backwards
+          # compatibility even though Composer now blocks their known advisories.
+          composer update --prefer-dist --no-interaction --no-progress --no-audit --no-blocking
 
       - name: Run test suite
         run: vendor/bin/phpunit
@@ -49,7 +51,7 @@ jobs:
   analyse:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -66,7 +68,7 @@ jobs:
   style:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
