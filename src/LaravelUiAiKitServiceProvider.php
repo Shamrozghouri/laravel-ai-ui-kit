@@ -3,6 +3,7 @@
 namespace Shamrozghouri\LaravelUiAiKit;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Compilers\BladeCompiler;
 use Shamrozghouri\LaravelUiAiKit\Commands\InstallCommand;
 use Shamrozghouri\LaravelUiAiKit\Contracts\ChatDriver;
 use Shamrozghouri\LaravelUiAiKit\Services\ChatManager;
@@ -37,12 +38,26 @@ class LaravelUiAiKitServiceProvider extends ServiceProvider
 
     protected function registerComponents(): void
     {
+        // Keep the conventional <x-ui-ai-kit-chatbot> alias available.
         $this->loadViewComponentsAs('ui-ai-kit', [
             Chatbot::class,
         ]);
 
-        $this->callAfterResolving('blade.compiler', function ($blade) {
-            $blade->anonymousComponentPath(__DIR__.'/../resources/views/components', 'ui-ai-kit');
+        $this->callAfterResolving(BladeCompiler::class, function (BladeCompiler $blade): void {
+            $blade->component(Chatbot::class, 'ui-ai-kit::chatbot');
+
+            // Package component namespaces use the <x-ui-ai-kit::...> syntax.
+            // Register the class namespace before the anonymous views so the
+            // chatbot entry point is hydrated by the Chatbot component class.
+            $blade->componentNamespace(
+                'Shamrozghouri\\LaravelUiAiKit\\View\\Components',
+                'ui-ai-kit'
+            );
+
+            $blade->anonymousComponentPath(
+                __DIR__.'/../resources/views/components',
+                'ui-ai-kit'
+            );
         });
     }
 

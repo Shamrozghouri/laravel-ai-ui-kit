@@ -1,7 +1,14 @@
 {
     "name": "shamrozghouri/laravel-ui-ai-kit",
     "description": "A drop-in landing page and AI chatbot UI for Laravel applications.",
-    "keywords": ["laravel", "landing-page", "chatbot", "ai", "blade", "ui"],
+    "keywords": [
+        "laravel",
+        "landing-page",
+        "chatbot",
+        "ai",
+        "blade",
+        "ui"
+    ],
     "homepage": "https://github.com/shamrozghouri/laravel-ui-ai-kit",
     "license": "MIT",
     "type": "library",
@@ -14,6 +21,7 @@
     ],
     "require": {
         "php": "^8.1",
+        "guzzlehttp/guzzle": "^7.8",
         "illuminate/contracts": "^10.0|^11.0|^12.0",
         "illuminate/support": "^10.0|^11.0|^12.0",
         "illuminate/http": "^10.0|^11.0|^12.0",

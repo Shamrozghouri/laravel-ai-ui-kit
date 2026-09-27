@@ -20,8 +20,7 @@ class ForwardDriver implements ChatDriver
         protected ?string $endpoint,
         protected int $timeout = 30,
         protected array $headers = [],
-    ) {
-    }
+    ) {}
 
     public function send(string $message, ?string $conversationId = null, array $history = []): array
     {

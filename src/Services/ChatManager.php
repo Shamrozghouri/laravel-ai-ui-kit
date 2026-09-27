@@ -15,9 +15,7 @@ class ChatManager
     /** @var array<string, Closure(Container): ChatDriver> */
     protected array $custom = [];
 
-    public function __construct(protected Container $app)
-    {
-    }
+    public function __construct(protected Container $app) {}
 
     /**
      * Register an additional driver.

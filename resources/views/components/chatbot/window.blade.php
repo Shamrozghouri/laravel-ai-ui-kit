@@ -1,16 +1,16 @@
 <section class="uiaikit-chat__window" role="dialog" aria-label="{{ $name }}">
-    @php($avatar = $avatar ?? null)
+    @php
+        $avatar = $avatar ?? null;
+        $avatarIsImage = filled($avatar) && (
+            str_starts_with($avatar, 'http://')
+            || str_starts_with($avatar, 'https://')
+            || str_starts_with($avatar, '/')
+            || str_starts_with($avatar, 'data:')
+            || (bool) preg_match('/\.(png|jpe?g|gif|svg|webp)$/i', $avatar)
+        );
+    @endphp
     <header class="uiaikit-chat__header">
         <span class="uiaikit-chat__avatar" aria-hidden="true">
-            @php
-                $avatarIsImage = filled($avatar) && (
-                    str_starts_with($avatar, 'http://')
-                    || str_starts_with($avatar, 'https://')
-                    || str_starts_with($avatar, '/')
-                    || str_starts_with($avatar, 'data:')
-                    || (bool) preg_match('/\.(png|jpe?g|gif|svg|webp)$/i', $avatar)
-                );
-            @endphp
             @if ($avatarIsImage)
                 <img src="{{ $avatar }}" alt="">
             @elseif (filled($avatar))
