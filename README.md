@@ -1,12 +1,25 @@
 # Laravel UI AI Kit
 
-A drop-in landing page and AI chat widget for Laravel applications. Install it with Composer, publish the config, and you have a marketing page and a chatbot that talks to whichever AI provider you already use.
+## Description
 
-- Landing page whose copy lives entirely in config
-- `<x-ui-ai-kit::chatbot />` Blade component you can drop into any layout
-- Swappable chat drivers, so API keys stay on the server
-- Plain CSS and vanilla JS — no Node, no build step
-- Laravel 10, 11 and 12 on PHP 8.1+
+A drop-in landing page and AI chat widget for Laravel applications. Install it with Composer, publish the config, and you have a marketing page and a chatbot that talks to whichever AI provider you already use — without writing a line of frontend code.
+
+## Features
+
+- Landing page whose copy lives entirely in config — no Blade edits needed to change headline, sections, or pricing
+- `<x-ui-ai-kit::chatbot />` floating chat widget, plus an optional full-page "console" UI at its own route
+- Split into five independently overridable Blade components (Chatbot, ChatbotWindow, ChatbotButton, ChatMessage, ChatInput)
+- Swappable chat drivers (`echo`, `forward`, or your own `ChatDriver`), so API keys stay on the server, never in frontend JS
+- Theming via CSS custom properties — accent color, light/dark mode, fonts, all config-driven, no build step to re-skin
+- Plain CSS and vanilla JS — no Node, no build step, no framework lock-in
+- Interactive `ui-ai-kit:install` wizard, including generating a custom driver class stub for you
+- CSRF, request validation, rate limiting, and XSS-safe rendering handled out of the box
+- Fully tested (PHPUnit) and statically analysed (PHPStan) across the whole supported version matrix in CI
+
+## Requirements
+
+- PHP 8.1, 8.2, 8.3, or 8.4
+- Laravel 10, 11, or 12
 
 ## Installation
 
@@ -15,7 +28,9 @@ composer require shamrozghouri/laravel-ui-ai-kit
 php artisan ui-ai-kit:install
 ```
 
-The service provider is discovered automatically. The install command publishes `config/ui-ai-kit.php` and copies the assets to `public/vendor/ui-ai-kit`. Assets are also served straight from the package, so the UI works before you publish anything.
+The service provider is discovered automatically. The install command publishes `config/ui-ai-kit.php`, copies the assets to `public/vendor/ui-ai-kit`, and (unless run with `--no-wizard`) walks through a short setup wizard. Assets are also served straight from the package, so the UI works before you publish anything.
+
+## Quick Start
 
 Visit `/ui-ai-kit` for the landing page, and add the widget to your own layout:
 
@@ -29,29 +44,9 @@ Put it just before `</body>`. Make sure your layout has a CSRF meta tag:
 <meta name="csrf-token" content="{{ csrf_token() }}">
 ```
 
-## Configuration
+That's it — the widget answers locally out of the box (the `echo` driver), so there's something working immediately. Point it at a real AI provider whenever you're ready (see [API Integration](#api-integration)).
 
-Everything lives in `config/ui-ai-kit.php`.
-
-### Branding and theme
-
-```php
-'branding' => [
-    'name' => 'Acme',
-    'monogram' => 'A',
-    'logo' => null,          // URL or asset path
-],
-
-'theme' => [
-    'mode' => 'dark',        // dark | light
-    'accent' => '#F53003',   // any hex; written in as a CSS custom property
-    'load_fonts' => true,
-],
-```
-
-Changing `accent` re-skins the whole page and the widget. Nothing is recompiled.
-
-### Landing page
+## Landing Page
 
 ```php
 'landing' => [
@@ -63,9 +58,7 @@ Changing `accent` re-skins the whole page and the widget. Nothing is recompiled.
 
 Set `enabled` to `false` if you only want the chatbot.
 
-### Landing page content
-
-The `content` key holds every string on the page: nav links, hero, features, steps, stats, pricing tiers, testimonials, closing CTA and footer. Edit it and the page changes. Remove a block — set it to `null` or an empty array — and that section disappears.
+The `content` config key holds every string on the page: nav links, hero, features, steps, stats, pricing tiers, testimonials, closing CTA and footer. Edit it and the page changes — no Blade required. Remove a block (set it to `null` or an empty array) and that section disappears entirely.
 
 ```php
 'content' => [
@@ -79,7 +72,7 @@ The `content` key holds every string on the page: nav links, hero, features, ste
 ],
 ```
 
-### Chatbot
+## Chatbot
 
 ```php
 'chatbot' => [
@@ -88,7 +81,7 @@ The `content` key holds every string on the page: nav links, hero, features, ste
     'welcome_message' => 'How can I help?',
     'placeholder' => 'Type your message',
     'position' => 'bottom-right',   // or bottom-left
-    'avatar' => null,               // image URL/path, an emoji, or null for the default icon
+    'avatar' => null,                // image URL/path, an emoji, or null for the default icon
     'open_on_load' => false,
     'suggestions' => ['How do I get started?'],
     'max_length' => 2000,
@@ -103,14 +96,9 @@ Any of these can be overridden per instance:
 
 ### Console (full-page chatbot UI)
 
-Prefer a full-screen, dashboard-style layout over the floating widget? Visit
-`/ui-ai-kit/console` (configurable) for a page with sidebar navigation, a header,
-a message thread with code-block support and timestamps, and a right-hand
-info panel with quick actions — it posts to the same chat endpoint as the
-widget above.
+Prefer a full-screen, dashboard-style layout over the floating widget? Visit `/ui-ai-kit/console` (configurable) for a page with sidebar navigation, a header, a message thread with code-block support and timestamps, and a right-hand info panel with quick actions — it posts to the same chat endpoint as the widget above.
 
-Everything is driven by config **and** `.env`, so end users can re-brand it
-after `composer require` without touching a single Blade file:
+Everything is driven by config **and** `.env`, so end users can re-brand it after `composer require` without touching a single Blade file:
 
 ```php
 'console' => [
@@ -143,20 +131,33 @@ after `composer require` without touching a single Blade file:
 ],
 ```
 
-Every text field on the page (brand name, tagline, welcome message, about
-copy, promo card, footer, user name/status) reads from an `env()` value
-first, so most re-branding is a `.env` change and a config cache clear —
-no publishing or editing Blade required. `nav` and `quick_actions` stay as
-plain arrays since lists don't map cleanly to `.env`, but they're still just
-config — no view edits needed.
+Every text field on the page (brand name, tagline, welcome message, about copy, promo card, footer, user name/status) reads from an `env()` value first, so most re-branding is a `.env` change and a config cache clear — no publishing or editing Blade required. `nav` and `quick_actions` stay as plain arrays since lists don't map cleanly to `.env`, but they're still just config — no view edits needed.
 
-#### Interactive setup
+## Configuration
 
-`php artisan ui-ai-kit:install` now also runs a short wizard (skip it with
-`--no-wizard`) that asks for the assistant's name, tagline, accent colour,
-light/dark mode, whether to enable the console and the widget, and how chat
-messages should be answered — then writes the answers straight to `.env`.
-Run it again any time to change your mind:
+Everything lives in `config/ui-ai-kit.php`.
+
+### Branding and theme
+
+```php
+'branding' => [
+    'name' => 'Acme',
+    'monogram' => 'A',
+    'logo' => null,          // URL or asset path
+],
+
+'theme' => [
+    'mode' => 'dark',        // dark | light
+    'accent' => '#F53003',   // any hex; written in as a CSS custom property
+    'load_fonts' => true,
+],
+```
+
+Changing `accent` re-skins the whole page and the widget. Nothing is recompiled.
+
+### Interactive setup
+
+`php artisan ui-ai-kit:install` runs a short wizard (skip it with `--no-wizard`) that asks for the assistant's name, tagline, accent colour, light/dark mode, whether to enable the console and the widget, and how chat messages should be answered — then writes the answers straight to `.env`. Run it again any time to change your mind:
 
 ```bash
 php artisan ui-ai-kit:install
@@ -164,9 +165,7 @@ php artisan ui-ai-kit:install
 
 ### Environment variables
 
-Every value above that's wrapped in `env()` can be set here instead of
-editing the config array — this is what `php artisan ui-ai-kit:install`'s
-wizard writes to. All are optional; defaults match the LaravelBot look.
+Every value above that's wrapped in `env()` can be set here instead of editing the config array — this is what `php artisan ui-ai-kit:install`'s wizard writes to. All are optional; defaults match the LaravelBot look.
 
 | Variable | Controls |
 | --- | --- |
@@ -188,7 +187,15 @@ wizard writes to. All are optional; defaults match the LaravelBot look.
 | `UI_AI_KIT_CONSOLE_PROMO_HEADING`, `UI_AI_KIT_CONSOLE_PROMO_BODY` | Right-panel promo card (empty heading hides it) |
 | `UI_AI_KIT_CHAT_ROUTE`, `UI_AI_KIT_CHAT_DRIVER`, `UI_AI_KIT_CHAT_ENDPOINT`, `UI_AI_KIT_CHAT_THROTTLE` | Chat API behaviour |
 
-## Connecting your AI provider
+## Customization
+
+- **Re-theme without touching CSS** — `theme.accent`, `theme.mode`, and `theme.load_fonts` are written in as CSS custom properties, so a color/mode change re-skins the landing page, console, and widget together.
+- **Swap the widget's icon** — set `chatbot.avatar` to an image URL/path or an emoji (see [Chatbot](#chatbot)).
+- **Override one piece of the widget** — every internal Blade file is independently addressable; see [Blade Components](#blade-components) rather than forking the whole thing.
+- **Override a whole view** — publish views (`--tag=ui-ai-kit-views`) and edit anything under `resources/views/vendor/ui-ai-kit`. Only do this when config isn't enough — published views stop receiving package updates.
+- **Answer chat messages your way** — implement your own `ChatDriver`, or let `ui-ai-kit:install` generate a stub for you (see [API Integration](#api-integration)).
+
+## API Integration
 
 The widget posts JSON to the package route:
 
@@ -242,25 +249,7 @@ $this->app->make(ChatManager::class)->extend('openai', fn () => new OpenAiDriver
 
 **Generating the stub for you.** Rather than writing the class by hand, choose "custom" for the driver question in `php artisan ui-ai-kit:install` — it writes `app/UiAiKit/{YourClassName}.php` from a stub with the `send()` method ready to fill in, sets `UI_AI_KIT_CHAT_DRIVER=custom` in `.env`, and prints the one-line `ChatManager::extend()` call to add to a service provider's `boot()`.
 
-## Security
-
-- Credentials never reach the browser. The widget only ever talks to your Laravel route.
-- The chat route runs the `web` middleware group, so CSRF protection applies; the widget sends the token from your meta tag.
-- Requests are validated (`message` required, length-capped) and throttled — `ui-ai-kit.api.throttle` defaults to 20 requests a minute. Set it to `null` to disable.
-- Messages are inserted with `textContent` in JavaScript and escaped by Blade on the server, so replies cannot inject markup.
-- Driver failures are logged and returned as a generic message, not a stack trace.
-
-## Publishing
-
-```bash
-php artisan vendor:publish --tag=ui-ai-kit-config
-php artisan vendor:publish --tag=ui-ai-kit-assets
-php artisan vendor:publish --tag=ui-ai-kit-views
-```
-
-Publish the views only when config is not enough — once published, package updates no longer reach them.
-
-### Blade components
+## Blade Components
 
 The chat widget is split into small, independently overridable pieces rather than one large view. Each is registered as an anonymous component under the `ui-ai-kit::` namespace, so you can `@include` or `<x-ui-ai-kit::...>` any single one instead of publishing (and forking) the whole widget:
 
@@ -272,13 +261,117 @@ The chat widget is split into small, independently overridable pieces rather tha
 | ChatMessage | `ui-ai-kit::components.chatbot.message` | A single message bubble — takes `role` and `body`, safe to reuse in a loop |
 | ChatInput | `ui-ai-kit::components.chatbot.input` | The composer: textarea + send button — takes `name` and `placeholder` |
 
+## Publishing
+
+```bash
+php artisan vendor:publish --tag=ui-ai-kit-config
+php artisan vendor:publish --tag=ui-ai-kit-assets
+php artisan vendor:publish --tag=ui-ai-kit-views
+```
+
+Publish the views only when config is not enough — once published, package updates no longer reach them.
+
+## Assets
+
+CSS and JS are served directly from the package (via an internal asset route) the moment it's installed, so the UI is fully styled and interactive before you publish anything:
+
+| File | Purpose |
+| --- | --- |
+| `css/ui-ai-kit.css` | Shared theme tokens + the chat widget. Loaded automatically wherever `<x-ui-ai-kit::chatbot />` is used |
+| `css/landing.css` | Landing-page-only styles. Loaded only by the bundled landing layout |
+| `css/console.css` | Full-page console styles |
+| `js/chatbot.js` | Widget behaviour: open/close, sending, typing indicator, errors, keyboard support |
+| `js/landing.js` | Landing page interactions |
+| `js/console.js` | Console page behaviour |
+| `images/` | Placeholder for a logo/screenshot asset, if you add one |
+
+Publish them with `--tag=ui-ai-kit-assets` to copy everything above into `public/vendor/ui-ai-kit` and serve it from your own web server instead.
+
+## Routes
+
+All four routes are optional and config-driven — disable or relocate any of them without touching package code:
+
+| Route | Config | Default URI | Purpose |
+| --- | --- | --- | --- |
+| `ui-ai-kit.landing` | `landing.enabled`, `landing.route`, `landing.middleware` | `/ui-ai-kit` | The bundled landing page |
+| `ui-ai-kit.console` | `console.enabled`, `console.route`, `console.middleware` | `/ui-ai-kit/console` | The full-page chatbot UI |
+| `ui-ai-kit.chat` | `api.enabled`, `api.route`, `api.middleware`, `api.throttle` | `/ui-ai-kit/chat` | The `POST` endpoint the widget/console talk to |
+| `ui-ai-kit.asset` | always registered | `/ui-ai-kit/assets/{file}` | Serves package CSS/JS before publishing |
+
+## Security
+
+- Credentials never reach the browser. The widget only ever talks to your Laravel route.
+- The chat route runs the `web` middleware group, so CSRF protection applies; the widget sends the token from your meta tag.
+- Requests are validated (`message` required, length-capped) and throttled — `ui-ai-kit.api.throttle` defaults to 20 requests a minute. Set it to `null` to disable.
+- Messages are inserted with `textContent` in JavaScript and escaped by Blade on the server, so replies cannot inject markup.
+- Driver failures are logged and returned as a generic message, not a stack trace.
+
 ## Testing
 
 ```bash
-composer test
-composer analyse
-composer format
+composer test           # PHPUnit
+composer analyse        # PHPStan
+composer format:check   # Pint, dry run
+composer format         # Pint, applies fixes
 ```
+
+## Laravel Compatibility
+
+Tested in CI (`.github/workflows/tests.yml`) across the full matrix:
+
+| PHP | Laravel 10 | Laravel 11 | Laravel 12 |
+| --- | :---: | :---: | :---: |
+| 8.1 | ✅ | — | — |
+| 8.2 | ✅ | ✅ | ✅ |
+| 8.3 | ✅ | ✅ | ✅ |
+| 8.4 | — | — | ✅ |
+
+Every push and pull request runs the full matrix, plus PHPStan and Pint.
+
+## Examples
+
+**Widget only, no landing page:**
+
+```php
+'landing' => ['enabled' => false],
+```
+
+```blade
+<x-ui-ai-kit::chatbot />
+```
+
+**Branded, light-mode widget in the bottom-left:**
+
+```blade
+<x-ui-ai-kit::chatbot name="Acme Support" position="bottom-left" avatar="https://acme.test/logo.png" />
+```
+
+```env
+UI_AI_KIT_THEME=light
+UI_AI_KIT_ACCENT=#2563eb
+```
+
+**Forwarding to your own AI endpoint:**
+
+```env
+UI_AI_KIT_CHAT_DRIVER=forward
+UI_AI_KIT_CHAT_ENDPOINT=https://api.acme.test/assistant
+```
+
+```php
+'api' => [
+    'headers' => ['Authorization' => 'Bearer '.env('ACME_ASSISTANT_TOKEN')],
+],
+```
+
+## Contributing
+
+1. Fork the repo and create a branch off `main`.
+2. `composer install`
+3. Make your change, keeping `composer test`, `composer analyse`, and `composer format:check` all green.
+4. Open a pull request describing what changed and why.
+
+CI runs the full test/analyse/format matrix on every pull request automatically.
 
 ## License
 

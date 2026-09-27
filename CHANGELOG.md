@@ -6,6 +6,15 @@ All notable changes to `laravel-ui-ai-kit` are documented here.
 
 ### Added
 - GitHub Actions workflow (`.github/workflows/tests.yml`): PHPUnit across PHP 8.1–8.3 × Laravel 10/11/12, plus PHPStan and Pint checks.
+- README fully restructured to the Phase 20 table of contents (Description, Features, Requirements, Installation, Quick Start, Landing Page, Chatbot, Configuration, Customization, API Integration, Blade Components, Publishing, Assets, Routes, Security, Testing, Laravel Compatibility, Examples, Contributing, License), adding the sections that didn't exist as their own headings before.
+
+### Verified
+- `composer validate` passes.
+- Every PHP file (`src/`, `config/`, `stubs/`, `tests/`) passes `php -l` with zero syntax errors.
+- No hardcoded secrets, API keys, or tokens anywhere in the codebase.
+- Every asset filename `AssetController` can serve maps to a real file on disk; no broken asset references.
+- Every README anchor link resolves to a real heading; no broken internal links.
+- No hardcoded `Auth::`, `DB::`, `Storage::disk()`, `Session::`, or `Cache::` calls — nothing assumes app-specific infrastructure beyond the `web` middleware group.
 - CI matrix extended to include PHP 8.4 (paired with Laravel 12), matching the full supported version matrix.
 - Explicit "service provider is registered" and "package views load" tests, rounding out the Service Provider test checklist alongside the existing config/route/asset tests.
 - `php artisan ui-ai-kit:install` wizard: added a "custom" option to the driver question. Picking it generates a `ChatDriver` stub at `app/UiAiKit/{Class}.php` from `stubs/chat-driver.stub`, sets `UI_AI_KIT_CHAT_DRIVER=custom`, and prints the exact `ChatManager::extend()` snippet to register it.
