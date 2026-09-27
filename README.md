@@ -6,7 +6,7 @@ A drop-in landing page and AI chat widget for Laravel applications. Install it w
 
 ## Features
 
-- Landing page whose copy lives entirely in config — no Blade edits needed to change headline, sections, or pricing
+- Landing page whose primary marketing copy lives in config — no Blade edits needed to change headlines, sections, or pricing
 - `<x-ui-ai-kit::chatbot />` floating chat widget, plus an optional full-page "console" UI at its own route
 - Split into five independently overridable Blade components (Chatbot, ChatbotWindow, ChatbotButton, ChatMessage, ChatInput)
 - Swappable chat drivers (`echo`, `forward`, or your own `ChatDriver`), so API keys stay on the server, never in frontend JS
@@ -18,8 +18,10 @@ A drop-in landing page and AI chat widget for Laravel applications. Install it w
 
 ## Requirements
 
-- PHP 8.1, 8.2, 8.3, or 8.4
+- PHP 8.1 or newer
 - Laravel 10, 11, or 12
+
+Laravel 10 supports PHP 8.1–8.3 in this package's CI matrix. Laravel 11 and 12 require PHP 8.2 or newer; see [Laravel Compatibility](#laravel-compatibility) for the combinations tested on every push.
 
 ## Installation
 
@@ -29,6 +31,12 @@ php artisan ui-ai-kit:install
 ```
 
 The service provider is discovered automatically. The install command publishes `config/ui-ai-kit.php`, copies the assets to `public/vendor/ui-ai-kit`, and (unless run with `--no-wizard`) walks through a short setup wizard. Assets are also served straight from the package, so the UI works before you publish anything.
+
+If your application caches configuration, clear that cache after the wizard changes `.env`:
+
+```bash
+php artisan config:clear
+```
 
 ## Quick Start
 
@@ -58,7 +66,7 @@ That's it — the widget answers locally out of the box (the `echo` driver), so 
 
 Set `enabled` to `false` if you only want the chatbot.
 
-The `content` config key holds every string on the page: nav links, hero, features, steps, stats, pricing tiers, testimonials, closing CTA and footer. Edit it and the page changes — no Blade required. Remove a block (set it to `null` or an empty array) and that section disappears entirely.
+The `content` config key holds the landing page's marketing content: nav links, hero, features, steps, stats, pricing tiers, testimonials, closing CTA and footer. Edit it and the page changes without modifying Blade. Remove a block (set it to `null` or an empty array) and that section disappears entirely. Small interface labels such as “Copy” and “Most popular” remain in the views and can be changed by publishing them.
 
 ```php
 'content' => [
@@ -131,7 +139,7 @@ Everything is driven by config **and** `.env`, so end users can re-brand it afte
 ],
 ```
 
-Every text field on the page (brand name, tagline, welcome message, about copy, promo card, footer, user name/status) reads from an `env()` value first, so most re-branding is a `.env` change and a config cache clear — no publishing or editing Blade required. `nav` and `quick_actions` stay as plain arrays since lists don't map cleanly to `.env`, but they're still just config — no view edits needed.
+The main branding fields (brand name, tagline, welcome message, about copy, promo card, footer and user name/status) read from an `env()` value first, so most re-branding is a `.env` change and a config cache clear. `nav` and `quick_actions` stay as plain arrays since lists don't map cleanly to `.env`. A few fixed interface labels, such as “Quick Actions,” require a published view override.
 
 ## Configuration
 
@@ -173,18 +181,21 @@ Every value above that's wrapped in `env()` can be set here instead of editing t
 | `UI_AI_KIT_THEME` | `dark` or `light` — affects the widget, landing page and console |
 | `UI_AI_KIT_ACCENT`, `UI_AI_KIT_ACCENT_HOVER` | Accent colour (hex) used everywhere |
 | `UI_AI_KIT_LOAD_FONTS` | Whether to pull Instrument Sans from Google Fonts |
+| `UI_AI_KIT_FONT_FAMILY` | CSS font stack used by the package UI |
 | `UI_AI_KIT_LANDING_ENABLED`, `UI_AI_KIT_LANDING_ROUTE` | Landing page toggle / URL |
 | `UI_AI_KIT_CHATBOT_ENABLED`, `UI_AI_KIT_CHATBOT_NAME` | Floating widget toggle / name |
 | `UI_AI_KIT_CHATBOT_AVATAR` | Header icon override — image URL/path or an emoji |
 | `UI_AI_KIT_CONSOLE_ENABLED`, `UI_AI_KIT_CONSOLE_ROUTE` | Full-page console toggle / URL |
+| `UI_AI_KIT_CONSOLE_TITLE` | Console browser-page title |
 | `UI_AI_KIT_CONSOLE_SIDEBAR`, `UI_AI_KIT_CONSOLE_PANEL`, `UI_AI_KIT_CONSOLE_HEADER` | Show/hide console regions |
 | `UI_AI_KIT_CONSOLE_NAME`, `UI_AI_KIT_CONSOLE_NAME_ACCENT`, `UI_AI_KIT_CONSOLE_TAGLINE` | Console brand text |
 | `UI_AI_KIT_CONSOLE_LOGO` | Image URL/path shown instead of the drawn mark |
 | `UI_AI_KIT_CONSOLE_HEADER_SUBTITLE`, `UI_AI_KIT_CONSOLE_FOOTER_TAGLINE` | Console header/sidebar copy |
 | `UI_AI_KIT_CONSOLE_USER_NAME`, `UI_AI_KIT_CONSOLE_USER_INITIAL`, `UI_AI_KIT_CONSOLE_USER_STATUS` | Console header user chip |
 | `UI_AI_KIT_CONSOLE_WELCOME`, `UI_AI_KIT_CONSOLE_PLACEHOLDER` | First message / input placeholder |
-| `UI_AI_KIT_CONSOLE_ABOUT_HEADING`, `_SUBHEADING`, `_BODY` | Right-panel "about" card |
+| `UI_AI_KIT_CONSOLE_ABOUT_HEADING`, `UI_AI_KIT_CONSOLE_ABOUT_SUBHEADING`, `UI_AI_KIT_CONSOLE_ABOUT_BODY` | Right-panel “about” card |
 | `UI_AI_KIT_CONSOLE_PROMO_HEADING`, `UI_AI_KIT_CONSOLE_PROMO_BODY` | Right-panel promo card (empty heading hides it) |
+| `UI_AI_KIT_CONSOLE_FOOTER_HEADING`, `UI_AI_KIT_CONSOLE_FOOTER_TAGLINE_SMALL` | Console sidebar footer card |
 | `UI_AI_KIT_CHAT_ROUTE`, `UI_AI_KIT_CHAT_DRIVER`, `UI_AI_KIT_CHAT_ENDPOINT`, `UI_AI_KIT_CHAT_THROTTLE` | Chat API behaviour |
 
 ## Customization
@@ -221,6 +232,8 @@ What happens next depends on `ui-ai-kit.api.driver`.
 ],
 ```
 
+The upstream endpoint receives the same `message`, `conversation_id`, and `history` fields. It should return JSON containing `message` (or `reply`) and may return `conversation_id`. Non-successful responses are converted into the package's generic chat error.
+
 **Your own driver.** Implement the contract and bind it:
 
 ```php
@@ -244,22 +257,33 @@ $this->app->bind(ChatDriver::class, OpenAiDriver::class);
 Or register it by name so it can be chosen from config:
 
 ```php
-$this->app->make(ChatManager::class)->extend('openai', fn () => new OpenAiDriver);
+use Illuminate\Contracts\Container\Container;
+use Shamrozghouri\LaravelUiAiKit\Services\ChatManager;
+
+// AppServiceProvider::boot()
+$this->app->make(ChatManager::class)->extend(
+    'openai',
+    fn (Container $app) => $app->make(OpenAiDriver::class),
+);
 ```
+
+Then set `UI_AI_KIT_CHAT_DRIVER=openai` and run `php artisan config:clear` if configuration is cached.
 
 **Generating the stub for you.** Rather than writing the class by hand, choose "custom" for the driver question in `php artisan ui-ai-kit:install` — it writes `app/UiAiKit/{YourClassName}.php` from a stub with the `send()` method ready to fill in, sets `UI_AI_KIT_CHAT_DRIVER=custom` in `.env`, and prints the one-line `ChatManager::extend()` call to add to a service provider's `boot()`.
 
 ## Blade Components
 
-The chat widget is split into small, independently overridable pieces rather than one large view. Each is registered as an anonymous component under the `ui-ai-kit::` namespace, so you can `@include` or `<x-ui-ai-kit::...>` any single one instead of publishing (and forking) the whole widget:
+The chat widget is split into small, independently overridable pieces rather than one large view. The main `chatbot` entry point is a class-based component so it can load configuration defaults and decide whether to render. Its four internal templates are anonymous components under the `ui-ai-kit::` namespace and can also be included as namespaced views.
 
-| Component | View | Renders |
-| --- | --- | --- |
-| Chatbot | `<x-ui-ai-kit::chatbot />` | The class-based entry point — reads your config defaults, then composes the three below |
-| ChatbotWindow | `ui-ai-kit::components.chatbot.window` | The panel: header, message log, suggestions, footnote |
-| ChatbotButton | `ui-ai-kit::components.chatbot.button` | The floating launcher icon |
-| ChatMessage | `ui-ai-kit::components.chatbot.message` | A single message bubble — takes `role` and `body`, safe to reuse in a loop |
-| ChatInput | `ui-ai-kit::components.chatbot.input` | The composer: textarea + send button — takes `name` and `placeholder` |
+| Component | Blade tag | Namespaced view | Required data |
+| --- | --- | --- | --- |
+| Chatbot | `<x-ui-ai-kit::chatbot />` | `ui-ai-kit::components.chatbot.chatbot` | Optional component attributes override config |
+| ChatbotWindow | `<x-ui-ai-kit::chatbot.window />` | `ui-ai-kit::components.chatbot.window` | `name`, `welcome`, `placeholder`, `suggestions`, `avatar` |
+| ChatbotButton | `<x-ui-ai-kit::chatbot.button />` | `ui-ai-kit::components.chatbot.button` | `name` |
+| ChatMessage | `<x-ui-ai-kit::chatbot.message />` | `ui-ai-kit::components.chatbot.message` | `role`, `body` |
+| ChatInput | `<x-ui-ai-kit::chatbot.input />` | `ui-ai-kit::components.chatbot.input` | `name`, `placeholder` |
+
+The main component is the recommended public API. Internal components are intended for advanced composition; pass their required values as Blade attributes or include parameters.
 
 ## Publishing
 
@@ -287,9 +311,15 @@ CSS and JS are served directly from the package (via an internal asset route) th
 
 Publish them with `--tag=ui-ai-kit-assets` to copy everything above into `public/vendor/ui-ai-kit` and serve it from your own web server instead.
 
+Published assets take precedence over the files inside the package. After upgrading the package, refresh them so old CSS or JavaScript is not left in place:
+
+```bash
+php artisan vendor:publish --tag=ui-ai-kit-assets --force
+```
+
 ## Routes
 
-All four routes are optional and config-driven — disable or relocate any of them without touching package code:
+The landing page, console, and chat routes are optional and config-driven. The fallback asset route is always registered at its fixed URI so unpublished package assets remain available:
 
 | Route | Config | Default URI | Purpose |
 | --- | --- | --- | --- |
@@ -305,6 +335,7 @@ All four routes are optional and config-driven — disable or relocate any of th
 - Requests are validated (`message` required, length-capped) and throttled — `ui-ai-kit.api.throttle` defaults to 20 requests a minute. Set it to `null` to disable.
 - Messages are inserted with `textContent` in JavaScript and escaped by Blade on the server, so replies cannot inject markup.
 - Driver failures are logged and returned as a generic message, not a stack trace.
+- The landing page, console, and chat endpoint are public by default. Add middleware such as `auth` to their respective `middleware` arrays when they should only be available to signed-in users.
 
 ## Testing
 
