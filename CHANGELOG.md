@@ -2,6 +2,21 @@
 
 All notable changes to `laravel-ui-ai-kit` are documented here, following [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.0.1] - 2026-09-28
+
+### Fixed
+
+- Configured the Testbench application key so encrypted cookies and HTTP feature tests work consistently across the supported Laravel matrix.
+- Registered `<x-ui-ai-kit::chatbot />` as the class-based component entry point while retaining the anonymous internal component namespace.
+- Corrected mixed Blade `@php` directives in the chatbot window that could leave avatar state undefined.
+- Declared Guzzle as a runtime dependency for the forwarding driver.
+
+### Changed
+
+- Declared the directly used Illuminate Console and Routing components and restored Composer's stable default dependency policy.
+- Expanded the README with accurate component, environment, route-security, asset-upgrade, and custom-driver guidance.
+- Enabled the GitHub Actions test workflow for version-tag pushes as well as `main` and pull requests.
+
 ## [1.0.0] - 2026-09-27
 
 Initial release.

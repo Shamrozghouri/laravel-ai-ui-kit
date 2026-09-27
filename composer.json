@@ -22,9 +22,11 @@
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.8",
+        "illuminate/console": "^10.0|^11.0|^12.0",
         "illuminate/contracts": "^10.0|^11.0|^12.0",
-        "illuminate/support": "^10.0|^11.0|^12.0",
         "illuminate/http": "^10.0|^11.0|^12.0",
+        "illuminate/routing": "^10.0|^11.0|^12.0",
+        "illuminate/support": "^10.0|^11.0|^12.0",
         "illuminate/view": "^10.0|^11.0|^12.0"
     },
     "require-dev": {
@@ -58,7 +60,5 @@
                 "Shamrozghouri\\LaravelUiAiKit\\LaravelUiAiKitServiceProvider"
             ]
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
