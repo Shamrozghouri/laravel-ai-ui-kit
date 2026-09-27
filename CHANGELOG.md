@@ -6,6 +6,7 @@ All notable changes to `laravel-ui-ai-kit` are documented here.
 
 ### Added
 - GitHub Actions workflow (`.github/workflows/tests.yml`): PHPUnit across PHP 8.1–8.3 × Laravel 10/11/12, plus PHPStan and Pint checks.
+- `resources/images/` is now included in the `ui-ai-kit-assets` publish group (published to `public/vendor/ui-ai-kit/images`), so a future logo/screenshot asset added there is publishable without a service provider change.
 - `chatbot.avatar` config option (and matching `avatar` prop on `<x-ui-ai-kit::chatbot />`): overrides the widget header icon with an image URL/path, a data URI, or a short text/emoji string. Leave unset to keep the default icon. `UI_AI_KIT_CHATBOT_AVATAR` env var included.
 - Chatbot empty state: when `chatbot.welcome_message` is blank, the message log now shows a centered placeholder ("Ask a question to get started.") instead of a bare empty scroll area. Clears automatically once the first message is sent.
 - Extracted the chat composer (textarea + send button) into its own `resources/views/components/chatbot/input.blade.php` anonymous component, completing the Chatbot / ChatbotButton / ChatbotWindow / ChatMessage / ChatInput set — every piece of the widget is now independently `@include`-able or overridable without forking the whole thing. Documented all five in the README.

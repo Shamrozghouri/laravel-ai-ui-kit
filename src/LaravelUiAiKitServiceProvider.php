@@ -55,6 +55,7 @@ class LaravelUiAiKitServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/css' => public_path('vendor/ui-ai-kit/css'),
             __DIR__.'/../resources/js' => public_path('vendor/ui-ai-kit/js'),
+            __DIR__.'/../resources/images' => public_path('vendor/ui-ai-kit/images'),
         ], 'ui-ai-kit-assets');
 
         $this->publishes([
