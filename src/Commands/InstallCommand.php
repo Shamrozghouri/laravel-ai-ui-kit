@@ -38,7 +38,7 @@ class InstallCommand extends Command
         }
 
         $this->newLine();
-        $this->components->bulletList(array_filter([
+        $this->components->bulletList([
             'Landing page: /'.config('ui-ai-kit.landing.route', 'ui-ai-kit'),
             'Full-page console: /'.config('ui-ai-kit.console.route', 'ui-ai-kit/console'),
             'Add <x-ui-ai-kit::chatbot /> before </body> in your layout for the floating widget',
@@ -46,7 +46,7 @@ class InstallCommand extends Command
                 ? "Register your driver — add this to a service provider's boot(): app(\Shamrozghouri\LaravelUiAiKit\Services\ChatManager::class)->extend('custom', fn () => new \App\UiAiKit\\{$this->customDriverClass});"
                 : 'Point ui-ai-kit.api at your AI provider when you are ready',
             'Re-run "php artisan ui-ai-kit:install" any time to change these answers',
-        ]));
+        ]);
 
         return self::SUCCESS;
     }
