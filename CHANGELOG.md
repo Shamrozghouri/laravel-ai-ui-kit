@@ -1,31 +1,20 @@
 # Changelog
 
-All notable changes to `laravel-ui-ai-kit` are documented here.
+All notable changes to `laravel-ui-ai-kit` are documented here, following [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [1.0.0] - 2026-09-27
+
+Initial release.
 
 ### Added
-- GitHub Actions workflow (`.github/workflows/tests.yml`): PHPUnit across PHP 8.1–8.3 × Laravel 10/11/12, plus PHPStan and Pint checks.
-- README fully restructured to the Phase 20 table of contents (Description, Features, Requirements, Installation, Quick Start, Landing Page, Chatbot, Configuration, Customization, API Integration, Blade Components, Publishing, Assets, Routes, Security, Testing, Laravel Compatibility, Examples, Contributing, License), adding the sections that didn't exist as their own headings before.
 
-### Verified
-- `composer validate` passes.
-- Every PHP file (`src/`, `config/`, `stubs/`, `tests/`) passes `php -l` with zero syntax errors.
-- No hardcoded secrets, API keys, or tokens anywhere in the codebase.
-- Every asset filename `AssetController` can serve maps to a real file on disk; no broken asset references.
-- Every README anchor link resolves to a real heading; no broken internal links.
-- No hardcoded `Auth::`, `DB::`, `Storage::disk()`, `Session::`, or `Cache::` calls — nothing assumes app-specific infrastructure beyond the `web` middleware group.
-- CI matrix extended to include PHP 8.4 (paired with Laravel 12), matching the full supported version matrix.
-- Explicit "service provider is registered" and "package views load" tests, rounding out the Service Provider test checklist alongside the existing config/route/asset tests.
-- `php artisan ui-ai-kit:install` wizard: added a "custom" option to the driver question. Picking it generates a `ChatDriver` stub at `app/UiAiKit/{Class}.php` from `stubs/chat-driver.stub`, sets `UI_AI_KIT_CHAT_DRIVER=custom`, and prints the exact `ChatManager::extend()` snippet to register it.
-- `resources/images/` is now included in the `ui-ai-kit-assets` publish group (published to `public/vendor/ui-ai-kit/images`), so a future logo/screenshot asset added there is publishable without a service provider change.
-- `chatbot.avatar` config option (and matching `avatar` prop on `<x-ui-ai-kit::chatbot />`): overrides the widget header icon with an image URL/path, a data URI, or a short text/emoji string. Leave unset to keep the default icon. `UI_AI_KIT_CHATBOT_AVATAR` env var included.
-- Chatbot empty state: when `chatbot.welcome_message` is blank, the message log now shows a centered placeholder ("Ask a question to get started.") instead of a bare empty scroll area. Clears automatically once the first message is sent.
-- Extracted the chat composer (textarea + send button) into its own `resources/views/components/chatbot/input.blade.php` anonymous component, completing the Chatbot / ChatbotButton / ChatbotWindow / ChatMessage / ChatInput set — every piece of the widget is now independently `@include`-able or overridable without forking the whole thing. Documented all five in the README.
-- Split `resources/css/landing.css` out of `ui-ai-kit.css`: the landing page's own stylesheet, loaded only by `layouts/landing.blade.php` and served via a new `landing.css` asset route/publish entry. `ui-ai-kit.css` now holds only the shared theme tokens and the chat widget, so a standalone `<x-ui-ai-kit::chatbot />` install no longer downloads landing page CSS it doesn't use. The chat widget's local variable fallbacks were also completed (added `--uiaikit-font`) so it now renders fully themed even without the `.uiaikit` layout wrapper.
-- `resources/images/` placeholder directory for future logo/screenshot assets.
-- Config-driven landing page at a configurable route.
-- `<x-ui-ai-kit::chatbot />` Blade component with floating button, window, history, typing and error states.
-- Chat endpoint with validation, throttling and swappable drivers (`echo`, `forward`, custom).
-- `php artisan ui-ai-kit:install` to publish config and assets.
-- Laravel-themed stylesheet driven by CSS custom properties, no build step.
+- **Landing page** — config-driven marketing page (`/ui-ai-kit` by default): hero, features, how-it-works, stats, pricing, testimonials, CTA, footer. Every string lives in `config/ui-ai-kit.php`; removing a block removes that section, no Blade editing required.
+- **Chatbot UI** — a floating `<x-ui-ai-kit::chatbot />` widget: open/close animation, message history, typing indicator, error state with retry, empty state, mobile responsiveness, and full keyboard support (Enter to send, Shift+Enter for a newline, Escape to close). A full-page "console" alternative is also included at `/ui-ai-kit/console`.
+- **Configuration** — branding, theme (accent color/light-dark mode/fonts as CSS custom properties, no build step), landing page toggle/route/content, chatbot behavior and avatar, console layout/branding/nav, and API/driver settings, all `env()`-backed.
+- **Blade components** — the widget is split into five independently overridable pieces: `Chatbot`, `ChatbotWindow`, `ChatbotButton`, `ChatMessage`, `ChatInput`.
+- **Chat API** — a package-owned `POST` endpoint backed by a swappable `ChatDriver` contract. Ships with `echo` (works with zero setup) and `forward` (proxies to any HTTP endpoint you control, keeping API keys server-side) drivers, and supports custom drivers — including one generated for you by the install wizard.
+- **`php artisan ui-ai-kit:install`** — publishes config and assets, and (unless run with `--no-wizard`) walks through an interactive setup: assistant name, tagline, accent color, light/dark mode, enabling the console/widget, and choosing a chat driver (including generating a custom driver stub).
+- **Security** — CSRF-protected chat endpoint, request validation, rate limiting (20 requests/minute by default), XSS-safe `textContent` rendering client-side and Blade escaping server-side, and generic (non-leaking) API error responses.
+- **Laravel support** — PHP 8.1–8.4, Laravel 10, 11, and 12, verified in CI across the full matrix alongside PHPUnit, PHPStan, and Pint.
+- Full documentation in the README, covering installation, configuration, customization, API integration, publishing, and examples.
+
