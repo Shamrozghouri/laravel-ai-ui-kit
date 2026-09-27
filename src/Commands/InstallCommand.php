@@ -15,6 +15,8 @@ class InstallCommand extends Command
     /** @var array<string, string> */
     protected array $env = [];
 
+    protected ?string $customDriverClass = null;
+
     public function handle(): int
     {
         $this->components->info('Installing Laravel UI AI Kit');
@@ -36,13 +38,15 @@ class InstallCommand extends Command
         }
 
         $this->newLine();
-        $this->components->bulletList([
+        $this->components->bulletList(array_filter([
             'Landing page: /'.config('ui-ai-kit.landing.route', 'ui-ai-kit'),
             'Full-page console: /'.config('ui-ai-kit.console.route', 'ui-ai-kit/console'),
             'Add <x-ui-ai-kit::chatbot /> before </body> in your layout for the floating widget',
-            'Point ui-ai-kit.api at your AI provider when you are ready',
+            $this->customDriverClass
+                ? "Register your driver — add this to a service provider's boot(): app(\Shamrozghouri\LaravelUiAiKit\Services\ChatManager::class)->extend('custom', fn () => new \App\UiAiKit\\{$this->customDriverClass});"
+                : 'Point ui-ai-kit.api at your AI provider when you are ready',
             'Re-run "php artisan ui-ai-kit:install" any time to change these answers',
-        ]);
+        ]));
 
         return self::SUCCESS;
     }
@@ -99,19 +103,61 @@ class InstallCommand extends Command
 
         $driver = $this->choice(
             'How should chat messages be answered for now?',
-            ['echo (repeats the message back, good for testing)', 'forward (proxy to an HTTP endpoint you provide)'],
+            [
+                'echo (repeats the message back, good for testing)',
+                'forward (proxy to an HTTP endpoint you provide)',
+                'custom (generate a driver class stub in your app)',
+            ],
             0
         );
-        $this->env['UI_AI_KIT_CHAT_DRIVER'] = str_starts_with($driver, 'echo') ? 'echo' : 'forward';
 
-        if ($this->env['UI_AI_KIT_CHAT_DRIVER'] === 'forward') {
+        if (str_starts_with($driver, 'echo')) {
+            $this->env['UI_AI_KIT_CHAT_DRIVER'] = 'echo';
+        } elseif (str_starts_with($driver, 'forward')) {
+            $this->env['UI_AI_KIT_CHAT_DRIVER'] = 'forward';
             $this->env['UI_AI_KIT_CHAT_ENDPOINT'] = (string) $this->ask(
                 'Endpoint to forward chat messages to',
                 config('ui-ai-kit.api.endpoint', '')
             );
+        } else {
+            $this->env['UI_AI_KIT_CHAT_DRIVER'] = 'custom';
+
+            $class = (string) $this->ask('Class name for your driver', 'CustomChatDriver');
+            $this->generateDriverStub($class);
         }
 
         $this->writeEnv();
+    }
+
+    /**
+     * Publish a ChatDriver stub into app/UiAiKit/{class}.php so the developer
+     * only has to fill in the actual provider call, then register it once
+     * with ChatManager::extend() (a reminder is printed after the wizard).
+     */
+    protected function generateDriverStub(string $class): void
+    {
+        $class = str_replace(['.php', '/'], '', $class);
+        $directory = app_path('UiAiKit');
+        $path = $directory.DIRECTORY_SEPARATOR.$class.'.php';
+
+        if (is_file($path) && ! $this->option('force')) {
+            $this->components->warn("app/UiAiKit/{$class}.php already exists — skipping (use --force to overwrite).");
+            $this->customDriverClass = $class;
+
+            return;
+        }
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $stub = (string) file_get_contents(__DIR__.'/../../stubs/chat-driver.stub');
+        $stub = str_replace(['{{ namespace }}', '{{ class }}'], ['App\\UiAiKit', $class], $stub);
+
+        file_put_contents($path, $stub);
+
+        $this->customDriverClass = $class;
+        $this->components->task("Driver stub created at app/UiAiKit/{$class}.php");
     }
 
     /**

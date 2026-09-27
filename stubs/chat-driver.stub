@@ -1,0 +1,28 @@
+<?php
+
+namespace {{ namespace }};
+
+use Shamrozghouri\LaravelUiAiKit\Contracts\ChatDriver;
+
+class {{ class }} implements ChatDriver
+{
+    /**
+     * Answer a single user message.
+     *
+     * Call your AI provider / agent here and return its reply. $history holds
+     * the prior turns as a list of ['role' => 'user'|'assistant', 'content' => string]
+     * if you need conversation context.
+     *
+     * @param  array<int, array{role: string, content: string}>  $history
+     * @return array{message: string, conversation_id?: string|null}
+     */
+    public function send(string $message, ?string $conversationId = null, array $history = []): array
+    {
+        // TODO: replace this with a real call to your AI provider / agent.
+
+        return [
+            'message' => "This is a placeholder reply from {{ class }}. Wire up your AI provider in ".__FILE__,
+            'conversation_id' => $conversationId,
+        ];
+    }
+}

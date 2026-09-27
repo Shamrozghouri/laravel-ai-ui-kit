@@ -6,6 +6,7 @@ All notable changes to `laravel-ui-ai-kit` are documented here.
 
 ### Added
 - GitHub Actions workflow (`.github/workflows/tests.yml`): PHPUnit across PHP 8.1–8.3 × Laravel 10/11/12, plus PHPStan and Pint checks.
+- `php artisan ui-ai-kit:install` wizard: added a "custom" option to the driver question. Picking it generates a `ChatDriver` stub at `app/UiAiKit/{Class}.php` from `stubs/chat-driver.stub`, sets `UI_AI_KIT_CHAT_DRIVER=custom`, and prints the exact `ChatManager::extend()` snippet to register it.
 - `resources/images/` is now included in the `ui-ai-kit-assets` publish group (published to `public/vendor/ui-ai-kit/images`), so a future logo/screenshot asset added there is publishable without a service provider change.
 - `chatbot.avatar` config option (and matching `avatar` prop on `<x-ui-ai-kit::chatbot />`): overrides the widget header icon with an image URL/path, a data URI, or a short text/emoji string. Leave unset to keep the default icon. `UI_AI_KIT_CHATBOT_AVATAR` env var included.
 - Chatbot empty state: when `chatbot.welcome_message` is blank, the message log now shows a centered placeholder ("Ask a question to get started.") instead of a bare empty scroll area. Clears automatically once the first message is sent.

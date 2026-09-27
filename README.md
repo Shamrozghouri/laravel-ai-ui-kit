@@ -240,6 +240,8 @@ Or register it by name so it can be chosen from config:
 $this->app->make(ChatManager::class)->extend('openai', fn () => new OpenAiDriver);
 ```
 
+**Generating the stub for you.** Rather than writing the class by hand, choose "custom" for the driver question in `php artisan ui-ai-kit:install` — it writes `app/UiAiKit/{YourClassName}.php` from a stub with the `send()` method ready to fill in, sets `UI_AI_KIT_CHAT_DRIVER=custom` in `.env`, and prints the one-line `ChatManager::extend()` call to add to a service provider's `boot()`.
+
 ## Security
 
 - Credentials never reach the browser. The widget only ever talks to your Laravel route.
