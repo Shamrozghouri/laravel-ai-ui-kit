@@ -2,6 +2,15 @@
 
 All notable changes to `laravel-ui-ai-kit` are documented here, following [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.0.2] - 2026-09-28
+
+### Changed
+
+- Replaced the closed Laravel major-version constraints with a Laravel 10+ range so future framework releases are not blocked by Composer solely due to their version number.
+- Added Laravel 13 and PHP 8.5 to the tested compatibility matrix.
+- Allowed Guzzle 8 so the package does not force newer Laravel applications to downgrade their HTTP client.
+- Added an unpinned latest-stable Laravel CI job and a weekly compatibility run to detect new framework releases automatically.
+
 ## [1.0.1] - 2026-09-28
 
 ### Fixed

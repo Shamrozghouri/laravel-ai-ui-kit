@@ -6,6 +6,9 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main]
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
 
 jobs:
   test:
@@ -14,17 +17,43 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1, 8.2, 8.3, 8.4]
-        laravel: [10.*, 11.*, 12.*]
-        exclude:
+        include:
           - php: 8.1
-            laravel: 11.*
-          - php: 8.1
-            laravel: 12.*
-          - php: 8.4
             laravel: 10.*
-          - php: 8.4
+            illuminate: 10.*
+          - php: 8.2
+            laravel: 10.*
+            illuminate: 10.*
+          - php: 8.3
+            laravel: 10.*
+            illuminate: 10.*
+          - php: 8.2
             laravel: 11.*
+            illuminate: 11.*
+          - php: 8.3
+            laravel: 11.*
+            illuminate: 11.*
+          - php: 8.2
+            laravel: 12.*
+            illuminate: 12.*
+          - php: 8.3
+            laravel: 12.*
+            illuminate: 12.*
+          - php: 8.4
+            laravel: 12.*
+            illuminate: 12.*
+          - php: 8.3
+            laravel: 13.*
+            illuminate: 13.*
+          - php: 8.4
+            laravel: 13.*
+            illuminate: 13.*
+          - php: 8.5
+            laravel: 13.*
+            illuminate: 13.*
+          - php: 8.5
+            laravel: latest stable
+            illuminate: '*'
 
     name: PHP ${{ matrix.php }} — Laravel ${{ matrix.laravel }}
 
@@ -40,7 +69,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "illuminate/contracts=${{ matrix.laravel }}" --no-interaction --no-update
+          composer require "illuminate/contracts=${{ matrix.illuminate }}" --no-interaction --no-update
           # Laravel 10 and 11 are kept in the matrix to verify backwards
           # compatibility even though Composer now blocks their known advisories.
           composer update --prefer-dist --no-interaction --no-progress --no-audit --no-blocking

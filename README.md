@@ -19,9 +19,9 @@ A drop-in landing page and AI chat widget for Laravel applications. Install it w
 ## Requirements
 
 - PHP 8.1 or newer
-- Laravel 10, 11, or 12
+- Laravel 10 or newer
 
-Laravel 10 supports PHP 8.1–8.3 in this package's CI matrix. Laravel 11 and 12 require PHP 8.2 or newer; see [Laravel Compatibility](#laravel-compatibility) for the combinations tested on every push.
+The package uses forward-compatible Composer constraints so a new Laravel major is not blocked merely because its version number is new. Laravel 10 through 13 are currently verified in CI; future majors remain subject to their own upstream breaking changes. See [Laravel Compatibility](#laravel-compatibility) for the combinations tested on every push.
 
 ## Installation
 
@@ -350,14 +350,15 @@ composer format         # Pint, applies fixes
 
 Tested in CI (`.github/workflows/tests.yml`) across the full matrix:
 
-| PHP | Laravel 10 | Laravel 11 | Laravel 12 |
-| --- | :---: | :---: | :---: |
-| 8.1 | ✅ | — | — |
-| 8.2 | ✅ | ✅ | ✅ |
-| 8.3 | ✅ | ✅ | ✅ |
-| 8.4 | — | — | ✅ |
+| PHP | Laravel 10 | Laravel 11 | Laravel 12 | Laravel 13 |
+| --- | :---: | :---: | :---: | :---: |
+| 8.1 | ✅ | — | — | — |
+| 8.2 | ✅ | ✅ | ✅ | — |
+| 8.3 | ✅ | ✅ | ✅ | ✅ |
+| 8.4 | — | — | ✅ | ✅ |
+| 8.5 | — | — | — | ✅ |
 
-Every push and pull request runs the full matrix, plus PHPStan and Pint.
+Every push and pull request runs the full matrix, plus an unpinned latest-stable Laravel job, PHPStan, and Pint. The workflow also runs weekly so a newly released framework version is checked automatically.
 
 ## Examples
 
