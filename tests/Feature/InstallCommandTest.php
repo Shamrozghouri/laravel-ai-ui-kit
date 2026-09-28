@@ -26,6 +26,10 @@ class InstallCommandTest extends TestCase
         $hadEnvironment = is_file($environmentPath);
         $originalEnvironment = $hadEnvironment ? file_get_contents($environmentPath) : null;
 
+        if (! $hadEnvironment) {
+            file_put_contents($environmentPath, '');
+        }
+
         try {
             $this->artisan('ui-ai-kit:install', ['--force' => true])
                 ->expectsChoice('Which UI should open at /?', 'Full chatbot interface', ['Full landing page', 'Full chatbot interface'])
@@ -70,6 +74,10 @@ class InstallCommandTest extends TestCase
         $environmentPath = base_path('.env');
         $hadEnvironment = is_file($environmentPath);
         $originalEnvironment = $hadEnvironment ? file_get_contents($environmentPath) : null;
+
+        if (! $hadEnvironment) {
+            file_put_contents($environmentPath, '');
+        }
 
         try {
             $this->artisan('ui-ai-kit:install', [
