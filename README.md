@@ -60,7 +60,7 @@ The asset command replaces files under `public/vendor/ui-ai-kit`. Keep custom CS
 
 ## Quick Start
 
-Visit `/ui-ai-kit` for the landing page, and add the widget to your own layout:
+After the installer, the selected landing or chatbot experience opens at `/`. Without selecting a home experience, the default landing route is `/ui-ai-kit` and the full chatbot route is `/ui-ai-kit/assistant`. Add the floating widget to any Blade layout with:
 
 ```blade
 <x-ui-ai-kit::chatbot />
@@ -117,6 +117,16 @@ The landing hero loads a pinned Three.js build from cdnjs only when the hero is 
 
 Primary links emit a `uiaikit:conversion` document event with the placement, label and destination path. Lead forms emit `uiaikit:lead-submit` without including submitted field values. Listen to either event to connect your analytics provider; no tracking vendor or cookies are added by the package.
 
+### Creator and Laravel Agent Evals cards
+
+The default landing content includes creator cards for Shamroz Ghouri and a full-width Laravel Agent Evals feature card. The Agent Evals card briefly explains behavioral testing, baselines, regression detection, tagged runs, and JSON output for CI. Its copyable install command is:
+
+```bash
+composer require shamrozghouri/laravel-agent-evals
+```
+
+These are ordinary config-driven items, not hard requirements. Edit or remove them under `content.features` and `content.testimonials` in `config/ui-ai-kit.php` when adapting the landing page for another product.
+
 ```php
 'content' => [
     'hero' => [
@@ -130,6 +140,34 @@ Primary links emit a `uiaikit:conversion` document event with the placement, lab
 ```
 
 ## Chatbot
+
+### Full Chatbot Interface
+
+Choose **Full chatbot interface** in the installer to mount the responsive ChatGPT-style page at `/`, or enable it manually:
+
+```php
+'chat_page' => [
+    'enabled' => true,
+    'route' => 'ui-ai-kit/assistant',
+    'title' => 'Laravel AI Assistant',
+    'heading' => 'How can Laravel help you?',
+    'subheading' => 'Ask about Laravel, your code, or what you are building.',
+    'history_limit' => 30,
+    'suggestions' => [
+        [
+            'title' => 'About the creator',
+            'prompt' => 'Who is Shamroz Ghouri, and what does he build?',
+            'answer' => 'Shamroz Ghouri creates open-source Laravel and AI tools.',
+        ],
+    ],
+],
+```
+
+Each starter card contains a visible `title`, the user `prompt`, and an optional local-demo `answer`. The page uses the same server-side chat driver and CSRF-protected endpoint as the floating widget. Conversation history is stored in that browser only; add persistence in your own driver/backend when accounts need shared history across devices.
+
+While a response is running, an accessible shimmer skeleton appears above the eventual answer. The interface also includes light/dark themes, responsive navigation, new-chat and clear-history actions, code-block rendering, error handling, and customizable branding. Edit `chat_page.heading`, `chat_page.subheading`, and `chat_page.suggestions` for content; publish `ui-ai-kit-chatbot-views` only when markup changes are necessary.
+
+### Floating Chatbot Widget
 
 ```php
 'chatbot' => [

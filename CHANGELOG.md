@@ -2,6 +2,13 @@
 
 All notable changes to `laravel-ui-ai-kit` are documented here, following [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.1] - 2026-09-29
+
+### Fixed
+
+- Corrected Composer and landing-page links to the actual `Shamrozghouri/laravel-ai-ui-kit` GitHub repository.
+- Expanded the README with complete documentation for the full chatbot interface, response skeleton, creator content, Laravel Agent Evals card, routes, and customization flow.
+
 ## [1.1.0] - 2026-09-29
 
 ### Added

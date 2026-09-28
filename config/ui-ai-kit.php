@@ -87,7 +87,7 @@ return [
             'heading' => 'A polished landing page and helpful AI chat, built for Laravel.',
             'subheading' => 'Start with a complete, responsive page. Shape every section from config, connect your own AI driver, and deploy it with the Laravel app you already own.',
             'primary_cta' => ['label' => 'See how to install', 'href' => '#how-it-works'],
-            'secondary_cta' => ['label' => 'Explore the source', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit'],
+            'secondary_cta' => ['label' => 'Explore the source', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit'],
             'install_command' => 'composer require shamrozghouri/laravel-ui-ai-kit',
             'notes' => [
                 'MIT licensed',
@@ -209,7 +209,7 @@ return [
                     'price' => '$0',
                     'period' => 'per project',
                     'description' => 'Start each client site with a reusable, brandable Laravel foundation.',
-                    'cta' => ['label' => 'See the MIT license', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/blob/main/LICENSE'],
+                    'cta' => ['label' => 'See the MIT license', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit/blob/main/LICENSE'],
                     'featured' => false,
                     'features' => [
                         ['label' => 'Commercial use permitted', 'included' => true],
@@ -274,7 +274,7 @@ return [
             'heading' => 'Build a page that feels like your business.',
             'body' => 'Start with a real Laravel package. Keep the sections you need, connect your own tools, and make the copy yours.',
             'primary' => ['label' => 'Install from Packagist', 'href' => 'https://packagist.org/packages/shamrozghouri/laravel-ui-ai-kit'],
-            'secondary' => ['label' => 'Browse the source', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit'],
+            'secondary' => ['label' => 'Browse the source', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit'],
             'form' => null,
         ],
 
@@ -284,27 +284,27 @@ return [
                 [
                     'title' => 'Package',
                     'links' => [
-                        ['label' => 'Installation', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit#installation'],
-                        ['label' => 'Configuration', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit#configuration'],
-                        ['label' => 'Blade components', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit#chatbot'],
-                        ['label' => 'Changelog', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/blob/main/CHANGELOG.md'],
+                        ['label' => 'Installation', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit#installation'],
+                        ['label' => 'Configuration', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit#configuration'],
+                        ['label' => 'Blade components', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit#chatbot'],
+                        ['label' => 'Changelog', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit/blob/main/CHANGELOG.md'],
                     ],
                 ],
                 [
                     'title' => 'Project',
                     'links' => [
-                        ['label' => 'GitHub', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit'],
+                        ['label' => 'GitHub', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit'],
                         ['label' => 'Packagist', 'href' => 'https://packagist.org/packages/shamrozghouri/laravel-ui-ai-kit'],
-                        ['label' => 'Issues', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/issues'],
-                        ['label' => 'Contributing', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/issues'],
+                        ['label' => 'Issues', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit/issues'],
+                        ['label' => 'Contributing', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit/issues'],
                     ],
                 ],
                 [
                     'title' => 'More',
                     'links' => [
-                        ['label' => 'Security', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/security'],
-                        ['label' => 'License', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/blob/main/LICENSE'],
-                        ['label' => 'Credits', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit'],
+                        ['label' => 'Security', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit/security'],
+                        ['label' => 'License', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit/blob/main/LICENSE'],
+                        ['label' => 'Credits', 'href' => 'https://github.com/Shamrozghouri/laravel-ai-ui-kit'],
                     ],
                 ],
             ],
