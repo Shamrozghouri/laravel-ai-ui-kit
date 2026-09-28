@@ -8,7 +8,8 @@ class InstallCommand extends Command
 {
     protected $signature = 'ui-ai-kit:install
         {--force : Overwrite files that already exist}
-        {--no-wizard : Skip the interactive setup questions and just publish defaults}';
+        {--no-wizard : Skip the interactive setup questions and just publish defaults}
+        {--experience= : Select the app home page without prompting: landing or chat}';
 
     protected $description = 'Publish the Laravel UI AI Kit configuration and assets, and optionally customise them';
 
@@ -17,9 +18,17 @@ class InstallCommand extends Command
 
     protected ?string $customDriverClass = null;
 
+    protected ?string $homeExperience = null;
+
     public function handle(): int
     {
         $this->components->info('Installing Laravel UI AI Kit');
+        $experience = $this->option('experience');
+        if ($experience !== null && ! in_array($experience, ['landing', 'chat'], true)) {
+            $this->components->error('The --experience option must be "landing" or "chat".');
+
+            return self::FAILURE;
+        }
 
         $this->callSilently('vendor:publish', array_filter([
             '--tag' => 'ui-ai-kit-config',
@@ -33,20 +42,29 @@ class InstallCommand extends Command
         ]));
         $this->components->task('Assets published to public/vendor/ui-ai-kit');
 
+        if ($experience !== null) {
+            $this->setHomeExperience($experience);
+        }
+
         if (! $this->option('no-wizard') && $this->input->isInteractive()) {
-            $this->runWizard();
+            $this->runWizard($experience === null);
+        } elseif ($experience !== null) {
+            $this->writeEnv();
         }
 
         $this->newLine();
-        $this->components->bulletList([
-            'Landing page: /'.config('ui-ai-kit.landing.route', 'ui-ai-kit'),
-            'Full-page console: /'.config('ui-ai-kit.console.route', 'ui-ai-kit/console'),
+        $this->components->bulletList(array_filter([
+            $this->homeExperience === 'chat'
+                ? 'Selected home page: full chatbot interface at /'
+                : ($this->homeExperience === 'landing' ? 'Selected home page: full landing page at /' : null),
+            $this->homeExperience === null ? 'Landing page: /'.config('ui-ai-kit.landing.route', 'ui-ai-kit') : null,
             'Add <x-ui-ai-kit::chatbot /> before </body> in your layout for the floating widget',
+            'Publish editable chatbot/console views with "php artisan vendor:publish --tag=ui-ai-kit-chatbot-views"',
             $this->customDriverClass
                 ? "Register your driver — add this to a service provider's boot(): app(\Shamrozghouri\LaravelUiAiKit\Services\ChatManager::class)->extend('custom', fn () => new \App\UiAiKit\\{$this->customDriverClass});"
                 : 'Point ui-ai-kit.api at your AI provider when you are ready',
             'Re-run "php artisan ui-ai-kit:install" any time to change these answers',
-        ]);
+        ]));
 
         return self::SUCCESS;
     }
@@ -55,20 +73,36 @@ class InstallCommand extends Command
      * Ask a handful of short questions and write the answers to .env, so a
      * fresh install can be branded without hand-editing the config file.
      */
-    protected function runWizard(): void
+    protected function runWizard(bool $askHomeExperience = true): void
     {
+        if ($askHomeExperience) {
+            $this->newLine();
+            $this->components->info('Choose which complete experience should be your app home page.');
+
+            $choice = $this->choice(
+                'Which UI should open at /?',
+                ['Full landing page', 'Full chatbot interface'],
+                0
+            );
+            $this->setHomeExperience(str_starts_with($choice, 'Full chatbot') ? 'chat' : 'landing');
+        }
+
         $this->newLine();
-        $this->components->info('Quick setup — press Enter to keep any default');
+        $this->components->info('Optional design and backend setup — press Enter to keep defaults');
 
-        $this->env['UI_AI_KIT_CONSOLE_NAME'] = (string) $this->ask(
-            'What should the assistant be called?',
-            config('ui-ai-kit.console.brand.name', 'LaravelBot')
+        $assistantName = (string) $this->ask(
+            'What should the Laravel assistant be called?',
+            config('ui-ai-kit.chatbot.name', 'Laravel Assistant')
         );
+        $this->env['UI_AI_KIT_CHATBOT_NAME'] = $assistantName;
+        $this->env['UI_AI_KIT_CONSOLE_NAME'] = $assistantName;
 
-        $this->env['UI_AI_KIT_CONSOLE_TAGLINE'] = (string) $this->ask(
-            'Short tagline for the sidebar',
-            config('ui-ai-kit.console.brand.tagline', 'Your Laravel Assistant in the Cloud')
+        $subtitle = (string) $this->ask(
+            'Short subtitle for the assistant',
+            config('ui-ai-kit.chatbot.subtitle', 'Your Laravel coding companion')
         );
+        $this->env['UI_AI_KIT_CHATBOT_SUBTITLE'] = $subtitle;
+        $this->env['UI_AI_KIT_CONSOLE_TAGLINE'] = $subtitle;
 
         $this->env['UI_AI_KIT_ACCENT'] = (string) $this->ask(
             'Accent colour (hex)',
@@ -82,22 +116,9 @@ class InstallCommand extends Command
         );
         $this->env['UI_AI_KIT_THEME'] = $mode;
 
-        $wantsConsole = $this->confirm(
-            'Enable the full-page console UI (in addition to the floating widget)?',
-            config('ui-ai-kit.console.enabled', true)
-        );
-        $this->env['UI_AI_KIT_CONSOLE_ENABLED'] = $wantsConsole ? 'true' : 'false';
-
-        if ($wantsConsole) {
-            $this->env['UI_AI_KIT_CONSOLE_ROUTE'] = (string) $this->ask(
-                'Console route',
-                config('ui-ai-kit.console.route', 'ui-ai-kit/console')
-            );
-        }
-
         $wantsWidget = $this->confirm(
-            'Enable the floating chat widget?',
-            config('ui-ai-kit.chatbot.enabled', true)
+            'Also enable the floating chat widget?',
+            $this->homeExperience === 'landing'
         );
         $this->env['UI_AI_KIT_CHATBOT_ENABLED'] = $wantsWidget ? 'true' : 'false';
 
@@ -127,6 +148,17 @@ class InstallCommand extends Command
         }
 
         $this->writeEnv();
+    }
+
+    protected function setHomeExperience(string $experience): void
+    {
+        $this->homeExperience = $experience;
+
+        $this->env['UI_AI_KIT_LANDING_ENABLED'] = $experience === 'landing' ? 'true' : 'false';
+        $this->env['UI_AI_KIT_LANDING_ROUTE'] = $experience === 'landing' ? '/' : 'ui-ai-kit';
+        $this->env['UI_AI_KIT_CHAT_PAGE_ENABLED'] = $experience === 'chat' ? 'true' : 'false';
+        $this->env['UI_AI_KIT_CHAT_PAGE_ROUTE'] = $experience === 'chat' ? '/' : 'ui-ai-kit/assistant';
+        $this->env['UI_AI_KIT_CONSOLE_ENABLED'] = 'false';
     }
 
     /**

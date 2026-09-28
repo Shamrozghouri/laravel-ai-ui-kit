@@ -1,17 +1,17 @@
 @extends('ui-ai-kit::layouts.landing')
 
+@php($landingSections = data_get($content, 'sections', ['hero', 'logos', 'assistant-preview', 'features', 'how-it-works', 'stats', 'pricing', 'testimonials', 'faqs', 'cta']))
+@php($availableLandingSections = ['hero', 'logos', 'assistant-preview', 'features', 'how-it-works', 'stats', 'pricing', 'testimonials', 'faqs', 'cta'])
+
 @section('content')
     @include('ui-ai-kit::landing.sections.nav')
 
     <main>
-        @include('ui-ai-kit::landing.sections.hero')
-        @include('ui-ai-kit::landing.sections.logos')
-        @include('ui-ai-kit::landing.sections.features')
-        @include('ui-ai-kit::landing.sections.how-it-works')
-        @include('ui-ai-kit::landing.sections.stats')
-        @include('ui-ai-kit::landing.sections.pricing')
-        @include('ui-ai-kit::landing.sections.testimonials')
-        @include('ui-ai-kit::landing.sections.cta')
+        @foreach ($landingSections as $section)
+            @if (is_string($section) && in_array($section, $availableLandingSections, true))
+                @include('ui-ai-kit::landing.sections.' . $section)
+            @endif
+        @endforeach
     </main>
 
     @include('ui-ai-kit::landing.sections.footer')

@@ -8,8 +8,10 @@
                     <span class="uiaikit-brand__mark">
                         @if (data_get($branding, 'logo'))
                             <img src="{{ data_get($branding, 'logo') }}" alt="{{ data_get($branding, 'name') }}">
+                        @elseif (data_get($branding, 'logo_fallback', 'laravel') === 'laravel')
+                            <img src="https://laravel.com/img/logomark.min.svg" alt="Laravel">
                         @else
-                            {{ data_get($branding, 'monogram', 'A') }}
+                            {{ data_get($branding, 'monogram', Str::substr(data_get($branding, 'name', 'A'), 0, 1)) }}
                         @endif
                     </span>
                     {{ data_get($branding, 'name') }}

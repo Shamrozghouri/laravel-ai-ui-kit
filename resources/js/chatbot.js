@@ -156,6 +156,9 @@
             var open = typeof state === 'boolean' ? state : root.dataset.open !== 'true';
             root.dataset.open = open ? 'true' : 'false';
             launcher.setAttribute('aria-expanded', open ? 'true' : 'false');
+            launcher.setAttribute('aria-label', open
+                ? launcher.getAttribute('data-close-label')
+                : launcher.getAttribute('data-open-label'));
             if (open) {
                 input.focus();
                 scroll();

@@ -7,6 +7,7 @@ use Shamrozghouri\LaravelUiAiKit\Contracts\ChatDriver;
 use Shamrozghouri\LaravelUiAiKit\LaravelUiAiKitServiceProvider;
 use Shamrozghouri\LaravelUiAiKit\Services\Drivers\EchoDriver;
 use Shamrozghouri\LaravelUiAiKit\Tests\TestCase;
+use Shamrozghouri\LaravelUiAiKit\UiAiKit;
 
 class ServiceProviderTest extends TestCase
 {
@@ -21,10 +22,56 @@ class ServiceProviderTest extends TestCase
         $this->assertSame('ui-ai-kit', config('ui-ai-kit.landing.route'));
     }
 
+    public function test_empty_theme_environment_values_fall_back_to_valid_css_defaults(): void
+    {
+        config()->set('ui-ai-kit.theme.accent', '');
+        config()->set('ui-ai-kit.theme.accent_hover', '');
+
+        $variables = UiAiKit::themeVariables();
+
+        $this->assertStringContainsString('--uiaikit-accent:#F53003;', $variables);
+        $this->assertStringContainsString('--uiaikit-accent-hover:#FF4433;', $variables);
+    }
+
     public function test_it_loads_the_package_views(): void
     {
         $this->assertTrue(view()->exists('ui-ai-kit::landing.index'));
         $this->assertTrue(view()->exists('ui-ai-kit::components.chatbot.window'));
+    }
+
+    public function test_chatbot_views_have_a_focused_publish_tag(): void
+    {
+        $this->artisan('vendor:publish', [
+            '--tag' => 'ui-ai-kit-chatbot-views',
+            '--force' => true,
+        ])->assertSuccessful();
+
+        $this->assertFileExists(resource_path('views/vendor/ui-ai-kit/components/chatbot/chatbot.blade.php'));
+        $this->assertFileExists(resource_path('views/vendor/ui-ai-kit/components/chatbot/window.blade.php'));
+        $this->assertFileExists(resource_path('views/vendor/ui-ai-kit/console/index.blade.php'));
+    }
+
+    public function test_published_chatbot_views_override_the_package_default(): void
+    {
+        $this->artisan('vendor:publish', [
+            '--tag' => 'ui-ai-kit-chatbot-views',
+            '--force' => true,
+        ])->assertSuccessful();
+
+        $overridePath = resource_path('views/vendor/ui-ai-kit/components/chatbot/window.blade.php');
+        $originalView = file_get_contents($overridePath);
+        file_put_contents($overridePath, '<p>App-owned chatbot view</p>');
+        view()->prependNamespace('ui-ai-kit', resource_path('views/vendor/ui-ai-kit'));
+        view()->getFinder()->flush();
+
+        try {
+            $this->blade('<x-ui-ai-kit::chatbot />')
+                ->assertSee('App-owned chatbot view')
+                ->assertDontSee('Usually replies instantly');
+        } finally {
+            file_put_contents($overridePath, $originalView);
+            $this->artisan('view:clear')->assertSuccessful();
+        }
     }
 
     public function test_it_registers_the_package_routes(): void

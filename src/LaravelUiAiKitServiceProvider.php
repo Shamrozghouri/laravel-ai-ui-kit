@@ -76,5 +76,11 @@ class LaravelUiAiKitServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/ui-ai-kit'),
         ], 'ui-ai-kit-views');
+
+        $this->publishes([
+            __DIR__.'/../resources/views/components/chatbot' => resource_path('views/vendor/ui-ai-kit/components/chatbot'),
+            __DIR__.'/../resources/views/console' => resource_path('views/vendor/ui-ai-kit/console'),
+            __DIR__.'/../resources/views/chat-page' => resource_path('views/vendor/ui-ai-kit/chat-page'),
+        ], 'ui-ai-kit-chatbot-views');
     }
 }

@@ -2,11 +2,12 @@
 
 ## Description
 
-A drop-in landing page and AI chat widget for Laravel applications. Install it with Composer, publish the config, and you have a marketing page and a chatbot that talks to whichever AI provider you already use — without writing a line of frontend code.
+A drop-in landing page, floating AI widget, and full chatbot interface for Laravel applications. Install it with Composer, choose the experience that should own `/`, and connect whichever AI provider you already use — without a frontend build step.
 
 ## Features
 
 - Landing page whose primary marketing copy lives in config — no Blade edits needed to change headlines, sections, or pricing
+- Full ChatGPT-style chatbot page with starter prompts, browser-local history, responsive navigation, and a response skeleton
 - `<x-ui-ai-kit::chatbot />` floating chat widget, plus an optional full-page "console" UI at its own route
 - Split into five independently overridable Blade components (Chatbot, ChatbotWindow, ChatbotButton, ChatMessage, ChatInput)
 - Swappable chat drivers (`echo`, `forward`, or your own `ChatDriver`), so API keys stay on the server, never in frontend JS
@@ -30,13 +31,32 @@ composer require shamrozghouri/laravel-ui-ai-kit
 php artisan ui-ai-kit:install
 ```
 
-The service provider is discovered automatically. The install command publishes `config/ui-ai-kit.php`, copies the assets to `public/vendor/ui-ai-kit`, and (unless run with `--no-wizard`) walks through a short setup wizard. Assets are also served straight from the package, so the UI works before you publish anything.
+The service provider is discovered automatically. The install command publishes `config/ui-ai-kit.php` and copies assets to `public/vendor/ui-ai-kit`. Its interactive wizard asks which experience should own `/`:
+
+- **Full landing page** — the marketing page becomes the app home page.
+- **Full chatbot interface** — a ChatGPT-style Laravel assistant becomes the app home page.
+
+The selected experience is enabled at `/` and the other home-page experience is disabled. Composer itself does not execute interactive package prompts, so run `php artisan ui-ai-kit:install` after `composer require`. For automation, use `php artisan ui-ai-kit:install --no-wizard --experience=chat` or `--experience=landing`. The existing dashboard console remains a separate optional route; it is not one of the two home-page choices.
+
+The full chatbot page is also available at `/ui-ai-kit/assistant` when enabled. It has local browser conversation history and uses the same configured chat API/driver as the widget. The default echo driver confirms the UI/API wiring; connect a real model with the existing `forward` or custom driver settings. Conversations are not stored on your server unless your driver/backend does so.
 
 If your application caches configuration, clear that cache after the wizard changes `.env`:
 
 ```bash
 php artisan config:clear
 ```
+
+## Updating
+
+Update the package and republish its versioned frontend assets:
+
+```bash
+composer update shamrozghouri/laravel-ui-ai-kit
+php artisan vendor:publish --tag=ui-ai-kit-assets --force
+php artisan config:clear
+```
+
+The asset command replaces files under `public/vendor/ui-ai-kit`. Keep custom CSS or JavaScript in your application, or back it up before using `--force`. The update does not overwrite `config/ui-ai-kit.php` or published Blade views, so your application-owned customizations remain intact. Compare your config with `vendor/shamrozghouri/laravel-ui-ai-kit/config/ui-ai-kit.php` when release notes mention new options. Published views also remain app-owned and do not receive package template changes automatically; avoid publishing them unless config customization is not enough.
 
 ## Quick Start
 
@@ -66,7 +86,36 @@ That's it — the widget answers locally out of the box (the `echo` driver), so 
 
 Set `enabled` to `false` if you only want the chatbot.
 
-The `content` config key holds the landing page's marketing content: nav links, hero, features, steps, stats, pricing tiers, testimonials, closing CTA and footer. Edit it and the page changes without modifying Blade. Remove a block (set it to `null` or an empty array) and that section disappears entirely. Small interface labels such as “Copy” and “Most popular” remain in the views and can be changed by publishing them.
+Set `branding.logo` to your own logo. The `branding.logo_fallback` option defaults to `laravel` for the package demo; set it to `monogram` when using the page for another brand without a logo.
+
+The `content` config key holds the landing page's marketing content: nav links, hero, assistant preview, features, steps, stats, pricing tiers, testimonials, FAQs, closing CTA and footer. Edit it and the page changes without modifying Blade. Remove a block (set it to `null` or an empty array) and that section disappears entirely. Use `content.sections` to choose and reorder sections; valid keys are `hero`, `logos`, `assistant-preview`, `features`, `how-it-works`, `stats`, `pricing`, `testimonials`, `faqs` and `cta`.
+
+The CTA can include an optional lead form. Point `action` at a POST route in your Laravel app; the form includes Laravel's CSRF token, but your app remains responsible for validating and storing submissions. Redirect back with `->with('status', 'Thanks, we will be in touch.')` to show a success message.
+
+```php
+'content' => [
+    'sections' => ['hero', 'features', 'pricing', 'faqs', 'cta'],
+    'cta' => [
+        'form' => [
+            'action' => '/contact',
+            'method' => 'POST',
+            'submit_label' => 'Request a quote',
+            'fields' => [
+                ['name' => 'name', 'label' => 'Your name', 'type' => 'text', 'required' => true],
+                ['name' => 'email', 'label' => 'Work email', 'type' => 'email', 'required' => true],
+                ['name' => 'message', 'label' => 'What do you need?', 'type' => 'textarea'],
+            ],
+            'privacy_text' => 'Your information is handled under our',
+            'privacy_label' => 'privacy policy',
+            'privacy_href' => '/privacy',
+        ],
+    ],
+],
+```
+
+The landing hero loads a pinned Three.js build from cdnjs only when the hero is near the viewport. It needs an internet connection; a CSS mascot remains when WebGL or the CDN is unavailable. Visitors who prefer reduced motion see a still scene.
+
+Primary links emit a `uiaikit:conversion` document event with the placement, label and destination path. Lead forms emit `uiaikit:lead-submit` without including submitted field values. Listen to either event to connect your analytics provider; no tracking vendor or cookies are added by the package.
 
 ```php
 'content' => [
@@ -86,11 +135,18 @@ The `content` config key holds the landing page's marketing content: nav links, 
 'chatbot' => [
     'enabled' => true,
     'name' => 'AI Assistant',
+    'subtitle' => 'Usually replies instantly',
     'welcome_message' => 'How can I help?',
+    'empty_message' => 'Ask a question to get started.',
+    'footnote' => 'Answers are generated and may be wrong.',
     'placeholder' => 'Type your message',
+    'open_label' => 'Open :name',
+    'close_label' => 'Close :name',
+    'send_label' => 'Send message',
     'position' => 'bottom-right',   // or bottom-left
-    'avatar' => null,                // image URL/path, an emoji, or null for the default icon
+    'avatar' => null,                // image URL/path, text, or fall back to branding.logo
     'open_on_load' => false,
+    'layout' => ['width' => '380px', 'height' => '560px', 'offset' => '24px'],
     'suggestions' => ['How do I get started?'],
     'max_length' => 2000,
 ],
@@ -99,8 +155,36 @@ The `content` config key holds the landing page's marketing content: nav links, 
 Any of these can be overridden per instance:
 
 ```blade
-<x-ui-ai-kit::chatbot name="Support" position="bottom-left" avatar="🤖" :open="true" />
+<x-ui-ai-kit::chatbot
+    name="Support"
+    subtitle="Here to help"
+    welcome="Tell us what you need."
+    placeholder="Ask support"
+    position="bottom-left"
+    avatar="/images/support-mark.svg"
+    :suggestions="['Track an order', 'Talk to support']"
+/>
 ```
+
+### Publish and customize the UI
+
+The package defaults work immediately; do not edit `vendor/`. The installer publishes the config and frontend assets. To copy only the chatbot UI views into your application, run:
+
+```bash
+php artisan vendor:publish --tag=ui-ai-kit-chatbot-views
+```
+
+The editable files are copied to:
+
+- `resources/views/vendor/ui-ai-kit/components/chatbot/` — floating widget shell, header, launcher, message, suggestions and composer.
+- `resources/views/vendor/ui-ai-kit/console/` — full-page console, including sidebar, header, conversation area and info panel.
+- `resources/views/vendor/ui-ai-kit/chat-page/` — full ChatGPT-style home-page interface.
+
+Laravel resolves these app-owned views before the package defaults. Edit the published files in your application; normal Composer updates do not overwrite them. The broader `php artisan vendor:publish --tag=ui-ai-kit-views` command still publishes every package view, including the landing page.
+
+To customize colors, typography and detailed spacing without changing markup, publish the assets with `php artisan vendor:publish --tag=ui-ai-kit-assets`; edit `public/vendor/ui-ai-kit/css/ui-ai-kit.css` for the floating widget, `chat.css` for the full chatbot page, and `console.css` for the dashboard console. Theme mode, accent color, font family, monospace family, widget width/height/offset, copy, suggestions, avatar and open state are configured in `config/ui-ai-kit.php`. Light/dark mode follows `theme.mode`; the landing page toggle also switches its embedded widget. Re-running asset publishing with `--force` replaces your published CSS/JS, so keep your custom edits or copy them into your own stylesheet first.
+
+The package supplies the UI only. The widget and console post to the configured chat route/driver. Connect your provider and persistence in your application; the default chat driver is for trying the UI and does not provide durable conversation history. Console sidebar links and quick actions are configuration data, not a built-in account/history backend.
 
 ### Console (full-page chatbot UI)
 
@@ -158,14 +242,16 @@ Everything lives in `config/ui-ai-kit.php`.
     'mode' => 'dark',        // dark | light
     'accent' => '#F53003',   // any hex; written in as a CSS custom property
     'load_fonts' => true,
+    'font_family' => "'Instrument Sans', ui-sans-serif, system-ui, sans-serif",
+    'mono_family' => 'ui-monospace, SFMono-Regular, Menlo, monospace',
 ],
 ```
 
-Changing `accent` re-skins the whole page and the widget. Nothing is recompiled.
+Changing `accent` re-skins the page and widget. Nothing is recompiled. The console shares the configured accent and font; publish its CSS when you need to adjust its individual surfaces.
 
 ### Interactive setup
 
-`php artisan ui-ai-kit:install` runs a short wizard (skip it with `--no-wizard`) that asks for the assistant's name, tagline, accent colour, light/dark mode, whether to enable the console and the widget, and how chat messages should be answered — then writes the answers straight to `.env`. Run it again any time to change your mind:
+`php artisan ui-ai-kit:install` runs a short wizard (skip it with `--no-wizard`) that asks whether the landing page or full chatbot should own `/`, then asks for the assistant name, tagline, accent colour, light/dark mode, floating widget preference, and chat driver. It writes those choices to `.env`. Run it again any time to change your mind:
 
 ```bash
 php artisan ui-ai-kit:install
@@ -185,6 +271,7 @@ Every value above that's wrapped in `env()` can be set here instead of editing t
 | `UI_AI_KIT_LANDING_ENABLED`, `UI_AI_KIT_LANDING_ROUTE` | Landing page toggle / URL |
 | `UI_AI_KIT_CHATBOT_ENABLED`, `UI_AI_KIT_CHATBOT_NAME` | Floating widget toggle / name |
 | `UI_AI_KIT_CHATBOT_AVATAR` | Header icon override — image URL/path or an emoji |
+| `UI_AI_KIT_CHAT_PAGE_ENABLED`, `UI_AI_KIT_CHAT_PAGE_ROUTE`, `UI_AI_KIT_CHAT_PAGE_TITLE` | Full chatbot page toggle / URL / browser title |
 | `UI_AI_KIT_CONSOLE_ENABLED`, `UI_AI_KIT_CONSOLE_ROUTE` | Full-page console toggle / URL |
 | `UI_AI_KIT_CONSOLE_TITLE` | Console browser-page title |
 | `UI_AI_KIT_CONSOLE_SIDEBAR`, `UI_AI_KIT_CONSOLE_PANEL`, `UI_AI_KIT_CONSOLE_HEADER` | Show/hide console regions |

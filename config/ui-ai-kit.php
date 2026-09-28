@@ -16,6 +16,7 @@ return [
         'name' => env('UI_AI_KIT_BRAND', 'Laravel UI AI Kit'),
         'monogram' => 'L',
         'logo' => null,
+        'logo_fallback' => 'laravel', // laravel | monogram
         'tagline' => 'A landing page and AI assistant you can install with Composer.',
     ],
 
@@ -36,6 +37,7 @@ return [
         'accent_hover' => env('UI_AI_KIT_ACCENT_HOVER', '#FF4433'),
         'load_fonts' => env('UI_AI_KIT_LOAD_FONTS', true),     // pull Instrument Sans from Google Fonts
         'font_family' => env('UI_AI_KIT_FONT_FAMILY', "'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"),
+        'mono_family' => env('UI_AI_KIT_MONO_FAMILY', 'ui-monospace, SFMono-Regular, Menlo, monospace'),
     ],
 
     /*
@@ -68,25 +70,28 @@ return [
 
     'content' => [
 
+        'sections' => ['hero', 'logos', 'assistant-preview', 'features', 'how-it-works', 'stats', 'pricing', 'testimonials', 'faqs', 'cta'],
+
         'nav' => [
             ['label' => 'Features', 'href' => '#features'],
+            ['label' => 'Assistant preview', 'href' => '#assistant-preview'],
             ['label' => 'How it works', 'href' => '#how-it-works'],
             ['label' => 'Pricing', 'href' => '#pricing'],
-            ['label' => 'Reviews', 'href' => '#reviews'],
+            ['label' => 'FAQ', 'href' => '#faq'],
         ],
 
-        'nav_cta' => ['label' => 'Get started', 'href' => '#pricing'],
+        'nav_cta' => ['label' => 'Install the kit', 'href' => '#how-it-works'],
 
         'hero' => [
             'eyebrow' => 'Now on Packagist',
-            'heading' => 'Ship a landing page and an AI assistant in one command.',
-            'subheading' => 'Install the package, publish the config, and your Laravel app has a production-ready marketing page plus a chat widget wired to whichever AI provider you already use.',
-            'primary_cta' => ['label' => 'Read the docs', 'href' => '#features'],
-            'secondary_cta' => ['label' => 'View on GitHub', 'href' => '#'],
+            'heading' => 'A polished landing page and helpful AI chat, built for Laravel.',
+            'subheading' => 'Start with a complete, responsive page. Shape every section from config, connect your own AI driver, and deploy it with the Laravel app you already own.',
+            'primary_cta' => ['label' => 'See how to install', 'href' => '#how-it-works'],
+            'secondary_cta' => ['label' => 'Explore the source', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit'],
             'install_command' => 'composer require shamrozghouri/laravel-ui-ai-kit',
             'notes' => [
                 'MIT licensed',
-                'Laravel 10, 11 and 12',
+                'Laravel 10+ compatible',
                 'No build step required',
             ],
         ],
@@ -96,9 +101,27 @@ return [
             'items' => ['Laravel', 'Livewire', 'Inertia', 'Tailwind', 'Vite', 'Pest', 'Forge', 'Vapor'],
         ],
 
+        'showcase' => [
+            'eyebrow' => 'Meet your AI sidekick',
+            'heading' => 'Helpful answers, wrapped in a familiar Laravel feel.',
+            'body' => 'Give your customers a friendly place to get unstuck. The assistant lives in your app, speaks from your server-side driver, and picks up your brand along the way.',
+            'notes' => [
+                'Ground replies in your own documentation',
+                'Keep provider keys safely on the server',
+                'Match the look and feel of your app',
+            ],
+            'status' => 'Ready to help',
+            'greeting' => 'Hi there! What are you building today?',
+            'question' => 'How do I add the assistant to my app?',
+            'answer' => 'Add the chatbot component to your Blade layout. That is it. Your provider keys stay safely on the server.',
+            'footer_label' => 'A little preview of your assistant',
+            'sticker_top' => 'Laravel-ready',
+            'sticker_bottom' => 'A little help, a lot of heart',
+        ],
+
         'features' => [
             'heading' => 'What you get in the box',
-            'subheading' => 'Four pieces that would otherwise take a week of setup.',
+            'subheading' => 'Practical Laravel tools for polished products and reliable AI agents.',
             'items' => [
                 [
                     'title' => 'A landing page that reads from config',
@@ -116,6 +139,11 @@ return [
                     'title' => 'Plain CSS, no build step',
                     'body' => 'Assets publish straight to your public directory. Nothing to compile, no Node dependency, and the theme is driven by CSS custom properties.',
                 ],
+                [
+                    'title' => 'Laravel Agent Evals',
+                    'body' => 'Test your real Laravel AI agent, check expected behavior, save passing baselines, catch regressions, run tagged cases, and export JSON results for CI.',
+                    'command' => 'composer require shamrozghouri/laravel-agent-evals',
+                ],
             ],
         ],
 
@@ -131,86 +159,123 @@ return [
 
         'stats' => [
             ['value' => '1', 'label' => 'Composer command'],
-            ['value' => '0', 'label' => 'Node dependencies'],
-            ['value' => '3', 'label' => 'Laravel versions supported'],
-            ['value' => '12kb', 'label' => 'Gzipped CSS and JS'],
+            ['value' => '0', 'label' => 'Frontend build steps'],
+            ['value' => '0', 'label' => 'Blade edits to change copy'],
+            ['value' => 'BYO', 'label' => 'AI provider'],
         ],
 
         'pricing' => [
-            'heading' => 'Free, and paid where it saves you time',
-            'subheading' => 'The package is MIT. Support and premium themes are optional.',
+            'heading' => 'One kit. Pick your starting point.',
+            'subheading' => 'Every option is included in the same MIT-licensed package. Start small, then grow into the rest.',
+            'footnote' => 'The kit is free. Hosting and any AI provider usage are billed separately by your chosen services.',
+            'featured_label' => 'Most popular',
             'tiers' => [
                 [
-                    'name' => 'Open source',
+                    'variant' => 'page',
+                    'eyebrow' => 'For your next launch',
+                    'name' => 'The landing page',
                     'price' => '$0',
                     'period' => 'forever',
-                    'description' => 'The whole package, MIT licensed.',
-                    'cta' => ['label' => 'Install now', 'href' => '#'],
+                    'description' => 'Give your offer a polished, responsive home that feels like your brand.',
+                    'cta' => ['label' => 'Explore page sections', 'href' => '#features'],
                     'featured' => false,
                     'features' => [
-                        ['label' => 'Landing page and chatbot', 'included' => true],
-                        ['label' => 'Config-driven content', 'included' => true],
-                        ['label' => 'Community issues', 'included' => true],
-                        ['label' => 'Premium themes', 'included' => false],
+                        ['label' => 'Config-driven page sections', 'included' => true],
+                        ['label' => 'Light and dark themes', 'included' => true],
+                        ['label' => 'FAQs, pricing and lead form', 'included' => true],
+                        ['label' => 'Runs inside your Laravel app', 'included' => true],
                     ],
                 ],
                 [
-                    'name' => 'Studio',
-                    'price' => '$49',
-                    'period' => 'one-off',
-                    'description' => 'Extra themes and component variants.',
-                    'cta' => ['label' => 'Buy Studio', 'href' => '#'],
+                    'variant' => 'assistant',
+                    'eyebrow' => 'For a better customer experience',
+                    'name' => 'Page + AI assistant',
+                    'price' => '$0',
+                    'period' => 'forever',
+                    'description' => 'Pair your landing page with an assistant that can answer questions.',
+                    'cta' => ['label' => 'Install the full kit', 'href' => 'https://packagist.org/packages/shamrozghouri/laravel-ui-ai-kit'],
                     'featured' => true,
                     'features' => [
-                        ['label' => 'Everything in Open source', 'included' => true],
-                        ['label' => 'Six additional themes', 'included' => true],
-                        ['label' => 'Alternative hero layouts', 'included' => true],
-                        ['label' => 'Priority issue triage', 'included' => true],
+                        ['label' => 'Everything in the landing page', 'included' => true],
+                        ['label' => 'Drop-in chat widget', 'included' => true],
+                        ['label' => 'Bring your own AI driver', 'included' => true],
+                        ['label' => 'Keep provider keys server-side', 'included' => true],
                     ],
                 ],
                 [
-                    'name' => 'Team',
-                    'price' => '$199',
-                    'period' => 'per year',
-                    'description' => 'For agencies shipping this to clients.',
-                    'cta' => ['label' => 'Talk to us', 'href' => '#'],
+                    'variant' => 'agency',
+                    'eyebrow' => 'For freelancers and studios',
+                    'name' => 'Client projects',
+                    'price' => '$0',
+                    'period' => 'per project',
+                    'description' => 'Start each client site with a reusable, brandable Laravel foundation.',
+                    'cta' => ['label' => 'See the MIT license', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/blob/main/LICENSE'],
                     'featured' => false,
                     'features' => [
-                        ['label' => 'Everything in Studio', 'included' => true],
-                        ['label' => 'Unlimited client projects', 'included' => true],
-                        ['label' => 'Private support channel', 'included' => true],
-                        ['label' => 'Migration help', 'included' => true],
+                        ['label' => 'Commercial use permitted', 'included' => true],
+                        ['label' => 'Rebrand each installation', 'included' => true],
+                        ['label' => 'Reorder or hide sections', 'included' => true],
+                        ['label' => 'Own and customize the code', 'included' => true],
                     ],
                 ],
             ],
         ],
 
         'testimonials' => [
-            'heading' => 'What developers say',
+            'heading' => 'Built by Shamroz Ghouri',
+            'subheading' => 'The idea, approach, and developer behind Laravel UI AI Kit.',
             'items' => [
                 [
-                    'quote' => 'I had the chat widget answering questions against our own docs endpoint before lunch. The driver contract is the part that made it easy.',
-                    'name' => 'Maya Rodriguez',
-                    'role' => 'Backend lead, Cartwheel',
+                    'quote' => 'I built Laravel UI AI Kit to give Laravel developers a polished landing page and AI assistant without rebuilding the same interface for every project.',
+                    'name' => 'Shamroz Ghouri',
+                    'role' => 'Creator, Laravel UI AI Kit',
                 ],
                 [
-                    'quote' => 'We drop this into every client project now. Editing one config file beats rebuilding a marketing page from scratch every time.',
-                    'name' => 'James Chen',
-                    'role' => 'Founder, Ninefold Studio',
+                    'quote' => 'My goal is to keep setup familiar: install with Composer, choose the experience you need, and customize the product from one configuration file.',
+                    'name' => 'Shamroz Ghouri',
+                    'role' => 'Laravel Package Developer',
                 ],
                 [
-                    'quote' => 'No Node, no build step, and it still looks like it belongs next to the rest of our Laravel app. That was the selling point.',
-                    'name' => 'Sarah Kim',
-                    'role' => 'Engineer, Halcyon',
+                    'quote' => 'I designed the package so teams can connect their own AI provider while keeping credentials and application logic safely on the Laravel server.',
+                    'name' => 'Shamroz Ghouri',
+                    'role' => 'Open-source Maintainer',
+                ],
+            ],
+        ],
+
+        'faqs' => [
+            'heading' => 'Good questions. Straight answers.',
+            'subheading' => 'The practical details before you install.',
+            'items' => [
+                [
+                    'question' => 'Does this add a JavaScript build tool to my Laravel app?',
+                    'answer' => 'No. The package ships its own CSS and JavaScript. The optional 3D hero loads a pinned Three.js file only when the hero is near the viewport; if it cannot load, a lightweight CSS illustration remains.',
+                ],
+                [
+                    'question' => 'Can I change the page for my product or business?',
+                    'answer' => 'Yes. Edit the content, section order, brand, logo and theme in config/ui-ai-kit.php. Every section can be hidden or reordered. Publish the views only when you need to change their markup.',
+                ],
+                [
+                    'question' => 'Which AI provider do I need?',
+                    'answer' => 'The chatbot uses a server-side driver contract. Use the included local driver to try the widget, then connect your provider or bind your own driver. Provider secrets stay on the server.',
+                ],
+                [
+                    'question' => 'What does the kit cost?',
+                    'answer' => 'The package is MIT licensed and has no package subscription fee. Your Laravel hosting and any AI provider usage are separate costs.',
+                ],
+                [
+                    'question' => 'Can I use this for client projects?',
+                    'answer' => 'Yes. The MIT license allows commercial use. Configure each project with its own brand, copy, links, pricing, FAQs and sections.',
                 ],
             ],
         ],
 
         'cta' => [
-            'heading' => 'Add it to your next Laravel project',
-            'body' => 'One command, then decide how much of it you want to keep.',
-            'primary' => ['label' => 'Get started', 'href' => '#'],
-            'secondary' => ['label' => 'Browse the source', 'href' => '#'],
+            'heading' => 'Build a page that feels like your business.',
+            'body' => 'Start with a real Laravel package. Keep the sections you need, connect your own tools, and make the copy yours.',
+            'primary' => ['label' => 'Install from Packagist', 'href' => 'https://packagist.org/packages/shamrozghouri/laravel-ui-ai-kit'],
+            'secondary' => ['label' => 'Browse the source', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit'],
+            'form' => null,
         ],
 
         'footer' => [
@@ -219,27 +284,27 @@ return [
                 [
                     'title' => 'Package',
                     'links' => [
-                        ['label' => 'Installation', 'href' => '#'],
-                        ['label' => 'Configuration', 'href' => '#'],
-                        ['label' => 'Blade components', 'href' => '#'],
-                        ['label' => 'Changelog', 'href' => '#'],
+                        ['label' => 'Installation', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit#installation'],
+                        ['label' => 'Configuration', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit#configuration'],
+                        ['label' => 'Blade components', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit#chatbot'],
+                        ['label' => 'Changelog', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/blob/main/CHANGELOG.md'],
                     ],
                 ],
                 [
                     'title' => 'Project',
                     'links' => [
-                        ['label' => 'GitHub', 'href' => '#'],
-                        ['label' => 'Packagist', 'href' => '#'],
-                        ['label' => 'Issues', 'href' => '#'],
-                        ['label' => 'Contributing', 'href' => '#'],
+                        ['label' => 'GitHub', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit'],
+                        ['label' => 'Packagist', 'href' => 'https://packagist.org/packages/shamrozghouri/laravel-ui-ai-kit'],
+                        ['label' => 'Issues', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/issues'],
+                        ['label' => 'Contributing', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/issues'],
                     ],
                 ],
                 [
                     'title' => 'More',
                     'links' => [
-                        ['label' => 'Security', 'href' => '#'],
-                        ['label' => 'License', 'href' => '#'],
-                        ['label' => 'Credits', 'href' => '#'],
+                        ['label' => 'Security', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/security'],
+                        ['label' => 'License', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit/blob/main/LICENSE'],
+                        ['label' => 'Credits', 'href' => 'https://github.com/shamrozghouri/laravel-ui-ai-kit'],
                     ],
                 ],
             ],
@@ -256,9 +321,14 @@ return [
     'chatbot' => [
         'enabled' => env('UI_AI_KIT_CHATBOT_ENABLED', true),
         'name' => env('UI_AI_KIT_CHATBOT_NAME', 'AI Assistant'),
-        'subtitle' => 'Usually replies instantly',
+        'subtitle' => env('UI_AI_KIT_CHATBOT_SUBTITLE', 'Usually replies instantly'),
         'welcome_message' => 'Hi. Ask me anything about the package and I will try to help.',
+        'empty_message' => 'Ask a question to get started.',
+        'footnote' => 'Answers are generated and may be wrong.',
         'placeholder' => 'Type your message',
+        'open_label' => 'Open :name',
+        'close_label' => 'Close :name',
+        'send_label' => 'Send message',
         'position' => 'bottom-right',        // bottom-right | bottom-left
 
         // Overrides the header icon. Accepts an image URL/path (png, jpg,
@@ -267,6 +337,11 @@ return [
         'avatar' => env('UI_AI_KIT_CHATBOT_AVATAR'),
 
         'open_on_load' => false,
+        'layout' => [
+            'width' => '380px',
+            'height' => '560px',
+            'offset' => '24px',
+        ],
         'suggestions' => [
             'How do I install it?',
             'Can I use my own AI provider?',
@@ -365,6 +440,79 @@ return [
         'footer' => [
             'heading' => env('UI_AI_KIT_CONSOLE_FOOTER_HEADING', 'LaravelBot'),
             'tagline' => env('UI_AI_KIT_CONSOLE_FOOTER_TAGLINE_SMALL', 'Always here, in the cloud.'),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Full-page ChatGPT-style interface
+    |--------------------------------------------------------------------------
+    */
+
+    'chat_page' => [
+        'enabled' => env('UI_AI_KIT_CHAT_PAGE_ENABLED', false),
+        'route' => env('UI_AI_KIT_CHAT_PAGE_ROUTE', 'ui-ai-kit/assistant'),
+        'middleware' => ['web'],
+        'title' => env('UI_AI_KIT_CHAT_PAGE_TITLE', 'Laravel AI Assistant'),
+        'heading' => 'How can Laravel help you?',
+        'subheading' => 'Ask about Laravel, your code, or what you are building.',
+        'history_limit' => 30,
+        'suggestions' => [
+            [
+                'title' => 'About the creator',
+                'prompt' => 'Who is Shamroz Ghouri, and what does he build?',
+                'answer' => 'Shamroz Ghouri is the creator of Laravel UI AI Kit and Laravel Agent Evals. He builds practical open-source Laravel packages for polished interfaces, AI integration, and reliable AI-agent testing.',
+            ],
+            [
+                'title' => 'Laravel Agent Evals',
+                'prompt' => 'What does Laravel Agent Evals do?',
+                'answer' => 'Laravel Agent Evals tests your real Laravel AI agent. It checks expected behavior, saves passing baselines, catches regressions, runs tagged cases, and exports JSON for CI. Install it with `composer require shamrozghouri/laravel-agent-evals`.',
+            ],
+            [
+                'title' => 'Install the package',
+                'prompt' => 'Show me the complete Laravel UI AI Kit installation steps, including composer require and the Artisan install wizard.',
+                'answer' => 'From your Laravel project directory, run `composer require shamrozghouri/laravel-ui-ai-kit`, then `php artisan ui-ai-kit:install`. Choose Full landing page or Full chatbot interface when prompted. The command publishes `config/ui-ai-kit.php` and assets. Composer itself cannot run package prompts, so run the Artisan command after Composer finishes.',
+            ],
+            [
+                'title' => 'Choose my home page',
+                'prompt' => 'How do I choose the full landing page or full chatbot interface as my Laravel app home page? Include the interactive and --experience install commands.',
+                'answer' => 'Run `php artisan ui-ai-kit:install` and choose Full landing page or Full chatbot interface. For automation, use `php artisan ui-ai-kit:install --no-wizard --experience=landing` or `php artisan ui-ai-kit:install --no-wizard --experience=chat`. The selected page is mounted at `/`; the other home-page route is disabled. Run `php artisan config:clear` if your app caches config.',
+            ],
+            [
+                'title' => 'Customize the landing page',
+                'prompt' => 'Explain how to edit landing-page copy, section order, pricing, FAQs, and branding in config/ui-ai-kit.php, and when to publish the landing views.',
+                'answer' => 'Edit `config/ui-ai-kit.php`: set the brand in `branding`, copy/pricing/FAQ content in `content`, and order or remove sections with `content.sections`. For markup changes, run `php artisan vendor:publish --tag=ui-ai-kit-views`; edit the app-owned files under `resources/views/vendor/ui-ai-kit/`. Clear cached config after changing configuration.',
+            ],
+            [
+                'title' => 'Customize the chatbot UI',
+                'prompt' => 'Show me how to customize the full chatbot interface layout, starter prompts, logo, colors, typography, and Blade views without editing vendor files.',
+                'answer' => 'Edit `chat_page.heading`, `chat_page.subheading`, and `chat_page.suggestions` in `config/ui-ai-kit.php` for the welcome screen and starter cards. Use `branding`, `chatbot`, and `theme` for logo, assistant name, colors, fonts, and light/dark mode. For markup, run `php artisan vendor:publish --tag=ui-ai-kit-chatbot-views`, then edit `resources/views/vendor/ui-ai-kit/chat-page/index.blade.php` and your published `public/vendor/ui-ai-kit/css/chat.css`. Do not edit `vendor/`.',
+            ],
+            [
+                'title' => 'Set up themes and branding',
+                'prompt' => 'How do I configure the logo, Laravel mark fallback, accent colors, fonts, and light or dark theme for the landing page and chatbot?',
+                'answer' => 'In `config/ui-ai-kit.php`, set `branding.name`, `branding.logo`, and `branding.logo_fallback`; customize `theme.mode`, `theme.accent`, `theme.accent_hover`, `theme.font_family`, and `theme.mono_family`. The landing and full chat pages have light/dark toggles. Run `php artisan config:clear` after editing cached config.',
+            ],
+            [
+                'title' => 'Widget, full chat, or console?',
+                'prompt' => 'Explain the differences between the floating chatbot widget, full-page ChatGPT-style interface, and dashboard console, including how to enable and route each one.',
+                'answer' => 'The floating widget is `<x-ui-ai-kit::chatbot />` for embedding in any Blade layout. The full-page ChatGPT-style interface is configured by `chat_page.enabled` and `chat_page.route`; the installer can select it as `/`. The separate dashboard console uses `console.enabled` and `console.route`. Pick landing or full chat in the installer for the main home experience.',
+            ],
+            [
+                'title' => 'Connect my AI provider',
+                'prompt' => 'Explain the echo, forward, and custom ChatDriver options, how to connect my AI provider, and where provider API keys should be stored.',
+                'answer' => 'The `echo` driver is only a local demo. To connect your service, set `UI_AI_KIT_CHAT_DRIVER=forward` and `UI_AI_KIT_CHAT_ENDPOINT=https://your-app.example/api/chat` in `.env`, or rerun `php artisan ui-ai-kit:install` and choose forward when asked for a driver. The package POSTs JSON with `message`, `conversation_id`, and `history`. Your endpoint must return JSON with `message` (or `reply`) and may return `conversation_id`. Add authorization headers under `api.headers` in `config/ui-ai-kit.php`; keep secrets server-side and run `php artisan config:clear` after config changes. For a custom provider, implement `ChatDriver` and register it with `ChatManager::extend()`.',
+            ],
+            [
+                'title' => 'Understand chat history and API',
+                'prompt' => 'Explain the chat endpoint, request and response fields, CSRF protection, browser-local conversation history, and how I can add server-side persistence.',
+                'answer' => 'The UI sends a CSRF-protected POST to `api.route` with `message`, `conversation_id`, and recent `history`; it expects JSON containing `message` or `reply`, plus an optional `conversation_id`. Full-page chat history is stored in this browser local storage, not your database. To share history across devices, add persistence to your Laravel backend/ChatDriver and customize the chat page to load and save server records.',
+            ],
+            [
+                'title' => 'Publish views and assets',
+                'prompt' => 'Give me the exact Artisan commands and destination paths for publishing chatbot views, all package views, and CSS or JavaScript assets safely.',
+                'answer' => 'For chat/console views run `php artisan vendor:publish --tag=ui-ai-kit-chatbot-views`; edit `resources/views/vendor/ui-ai-kit/chat-page/` and `resources/views/vendor/ui-ai-kit/console/`. For every Blade view use `php artisan vendor:publish --tag=ui-ai-kit-views`. For CSS/JS run `php artisan vendor:publish --tag=ui-ai-kit-assets`; files go under `public/vendor/ui-ai-kit/`. Customize these app-owned copies, never `/vendor`. Publishing assets again with `--force` overwrites your edits.',
+            ],
         ],
     ],
 

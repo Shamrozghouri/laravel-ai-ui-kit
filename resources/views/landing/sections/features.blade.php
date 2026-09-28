@@ -16,6 +16,12 @@
                         <span class="uiaikit-feature__index">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
                         <h3>{{ $feature['title'] }}</h3>
                         <p>{{ $feature['body'] }}</p>
+                        @if ($command = data_get($feature, 'command'))
+                            <div class='uiaikit-install uiaikit-feature__install'>
+                                <code>{{ $command }}</code>
+                                <button type='button' class='uiaikit-copy' data-uiaikit-copy='{{ $command }}'>Copy</button>
+                            </div>
+                        @endif
                     </article>
                 @endforeach
             </div>

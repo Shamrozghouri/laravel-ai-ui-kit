@@ -19,6 +19,8 @@ class AssetController extends Controller
         'landing.js' => ['js/landing.js', 'application/javascript'],
         'console.css' => ['css/console.css', 'text/css'],
         'console.js' => ['js/console.js', 'application/javascript'],
+        'chat.css' => ['css/chat.css', 'text/css'],
+        'chat-page.js' => ['js/chat-page.js', 'application/javascript'],
     ];
 
     public function __invoke(string $file): Response

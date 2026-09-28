@@ -78,7 +78,7 @@
 .uiaikit-chat {
     position: fixed;
     z-index: 60;
-    bottom: 24px;
+    bottom: var(--uiaikit-chat-offset, 24px);
     font-family: var(--uiaikit-font);
 
     --uiaikit-accent: #f53003;
@@ -91,6 +91,32 @@
     --uiaikit-text-muted: #a1a09a;
     --uiaikit-text-faint: #706f6c;
     --uiaikit-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.uiaikit .uiaikit-chat {
+    --uiaikit-accent: inherit;
+    --uiaikit-accent-hover: inherit;
+    --uiaikit-bg: inherit;
+    --uiaikit-surface: inherit;
+    --uiaikit-surface-raised: inherit;
+    --uiaikit-border: inherit;
+    --uiaikit-border-strong: inherit;
+    --uiaikit-text: inherit;
+    --uiaikit-text-muted: inherit;
+    --uiaikit-text-faint: inherit;
+    --uiaikit-font: inherit;
+    --uiaikit-mono: inherit;
+}
+
+.uiaikit-chat[data-uiaikit-theme="light"] {
+    --uiaikit-bg: #fdfdfc;
+    --uiaikit-surface: #ffffff;
+    --uiaikit-surface-raised: #f6f6f4;
+    --uiaikit-border: #e3e3e0;
+    --uiaikit-border-strong: #d2d2cd;
+    --uiaikit-text: #1b1b18;
+    --uiaikit-text-muted: #55554f;
+    --uiaikit-text-faint: #706f6c;
 }
 
 .uiaikit-chat[data-position="bottom-right"] {
@@ -147,8 +173,8 @@
 .uiaikit-chat__window {
     position: absolute;
     bottom: 68px;
-    width: min(380px, calc(100vw - 32px));
-    height: min(560px, calc(100vh - 140px));
+    width: min(var(--uiaikit-chat-width, 380px), calc(100vw - 32px));
+    height: min(var(--uiaikit-chat-height, 560px), calc(100vh - 140px));
     display: flex;
     flex-direction: column;
     background: var(--uiaikit-bg, #0a0a0a);
@@ -458,7 +484,7 @@
 
 @media (max-width: 560px) {
     .uiaikit-chat {
-        bottom: 16px;
+        bottom: min(var(--uiaikit-chat-offset, 24px), 16px);
     }
 
     .uiaikit-chat[data-position="bottom-right"] {

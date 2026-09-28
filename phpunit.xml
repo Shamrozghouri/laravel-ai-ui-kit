@@ -17,4 +17,10 @@
             <directory>src</directory>
         </include>
     </source>
+    <php>
+        <env name='UI_AI_KIT_LANDING_ENABLED' value='true' force='true'/>
+        <env name='UI_AI_KIT_LANDING_ROUTE' value='ui-ai-kit' force='true'/>
+        <env name='UI_AI_KIT_CONSOLE_ENABLED' value='true' force='true'/>
+        <env name='UI_AI_KIT_CHAT_PAGE_ENABLED' value='false' force='true'/>
+    </php>
 </phpunit>

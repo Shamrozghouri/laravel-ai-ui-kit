@@ -12,11 +12,14 @@
 
             <div class="uiaikit-pricing">
                 @foreach (data_get($pricing, 'tiers', []) as $tier)
-                    <div class="uiaikit-plan @if (data_get($tier, 'featured')) uiaikit-plan--featured @endif">
+                    <div class="uiaikit-plan uiaikit-plan--{{ data_get($tier, 'variant', 'default') }} @if (data_get($tier, 'featured')) uiaikit-plan--featured @endif">
                         @if (data_get($tier, 'featured'))
-                            <span class="uiaikit-plan__tag">Most popular</span>
+                            <span class="uiaikit-plan__tag">{{ data_get($pricing, 'featured_label', 'Recommended') }}</span>
                         @endif
 
+                        @if ($eyebrow = data_get($tier, 'eyebrow'))
+                            <span class="uiaikit-plan__eyebrow">{{ $eyebrow }}</span>
+                        @endif
                         <div class="uiaikit-plan__name">{{ $tier['name'] }}</div>
 
                         <div class="uiaikit-plan__price">
@@ -28,7 +31,8 @@
 
                         @if ($cta = data_get($tier, 'cta'))
                             <a href="{{ $cta['href'] }}"
-                               class="uiaikit-btn uiaikit-btn--block {{ data_get($tier, 'featured') ? 'uiaikit-btn--primary' : 'uiaikit-btn--ghost' }}">
+                                         class="uiaikit-btn uiaikit-btn--block {{ data_get($tier, 'featured') ? 'uiaikit-btn--primary' : 'uiaikit-btn--ghost' }}"
+                                         data-uiaikit-conversion="pricing:{{ $tier['name'] }}">
                                 {{ $cta['label'] }}
                             </a>
                         @endif
@@ -52,6 +56,10 @@
                     </div>
                 @endforeach
             </div>
+
+            @if ($footnote = data_get($pricing, 'footnote'))
+                <p class="uiaikit-pricing__footnote">{{ $footnote }}</p>
+            @endif
         </div>
     </section>
 @endif

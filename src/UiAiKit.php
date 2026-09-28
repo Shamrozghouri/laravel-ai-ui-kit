@@ -55,9 +55,10 @@ class UiAiKit
         $theme = (array) config('ui-ai-kit.theme', []);
 
         $vars = [
-            '--uiaikit-accent' => $theme['accent'] ?? '#F53003',
-            '--uiaikit-accent-hover' => $theme['accent_hover'] ?? '#FF4433',
-            '--uiaikit-font' => $theme['font_family'] ?? 'ui-sans-serif, system-ui, sans-serif',
+            '--uiaikit-accent' => filled($theme['accent'] ?? null) ? $theme['accent'] : '#F53003',
+            '--uiaikit-accent-hover' => filled($theme['accent_hover'] ?? null) ? $theme['accent_hover'] : '#FF4433',
+            '--uiaikit-font' => filled($theme['font_family'] ?? null) ? $theme['font_family'] : 'ui-sans-serif, system-ui, sans-serif',
+            '--uiaikit-mono' => filled($theme['mono_family'] ?? null) ? $theme['mono_family'] : 'ui-monospace, SFMono-Regular, Menlo, monospace',
         ];
 
         return implode('', array_map(

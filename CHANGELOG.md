@@ -2,6 +2,27 @@
 
 All notable changes to `laravel-ui-ai-kit` are documented here, following [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.0] - 2026-09-29
+
+### Added
+
+- Added an installer choice between a complete landing page and a full ChatGPT-style chatbot interface at the application root.
+- Added the full chatbot page with starter prompts, local browser history, responsive navigation, theme switching, and an accessible response skeleton while queries run.
+- Added richer landing sections, including the assistant preview, FAQs, configurable section ordering, lead-form support, creator cards, and a Laravel Agent Evals feature card with a copyable install command.
+- Added automated coverage for the installer experiences, chatbot page, landing sections, published assets, accessibility labels, and response skeleton.
+
+### Changed
+
+- Expanded the landing-page design, responsive behavior, navigation, pricing, calls to action, branding, and conversion events.
+- Improved floating-widget labels, layout configuration, avatar handling, input focus styling, and button presentation.
+- Made an unpaired final feature card span the full grid width and made package content easier to customize from `config/ui-ai-kit.php`.
+- Documented safe package updates, published-view behavior, and asset overwrite precautions.
+
+### Fixed
+
+- Isolated package tests from stale Testbench environment and configuration files.
+- Kept chat provider credentials server-side and preserved escaped output throughout the new interfaces.
+
 ## [1.0.2] - 2026-09-28
 
 ### Changed

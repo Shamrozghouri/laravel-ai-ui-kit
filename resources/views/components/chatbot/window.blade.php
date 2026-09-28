@@ -26,9 +26,9 @@
         </span>
         <span>
             <span class="uiaikit-chat__title">{{ $name }}</span>
-            <span class="uiaikit-chat__status">{{ config('ui-ai-kit.chatbot.subtitle', 'Online') }}</span>
+            <span class="uiaikit-chat__status">{{ $subtitle }}</span>
         </span>
-        <button type="button" class="uiaikit-chat__dismiss" data-uiaikit="dismiss" aria-label="Close {{ $name }}">
+        <button type="button" class="uiaikit-chat__dismiss" data-uiaikit="dismiss" aria-label="{{ $closeLabel }}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M6 6l12 12M6 18 18 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
@@ -43,7 +43,7 @@
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M4 5.5h16v10H8.5L4 19.5v-14Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
                 </svg>
-                <p>Ask a question to get started.</p>
+                <p>{{ $emptyMessage }}</p>
             </div>
         @endif
     </div>
@@ -59,7 +59,10 @@
     @include('ui-ai-kit::components.chatbot.input', [
         'name' => $name,
         'placeholder' => $placeholder,
+        'sendLabel' => $sendLabel,
     ])
 
-    <p class="uiaikit-chat__footnote">Answers are generated and may be wrong.</p>
+    @if (filled($footnote))
+        <p class="uiaikit-chat__footnote">{{ $footnote }}</p>
+    @endif
 </section>
